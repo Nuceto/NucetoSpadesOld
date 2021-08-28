@@ -36,6 +36,7 @@
 DEFINE_SPADES_SETTING(cg_minimapSize, "128");
 DEFINE_SPADES_SETTING(cg_minimapPlayerColor, "1");
 DEFINE_SPADES_SETTING(cg_minimapPlayerIcon, "1");
+DEFINE_SPADES_SETTING(n_minimapTransparency, "1");
 
 using std::pair;
 using stmp::optional;
@@ -327,7 +328,7 @@ namespace spades {
 				                          (renderer->ScreenHeight() + zoomedSize.y) * .5f);
 			}
 
-			float alpha = 1.f;
+			float alpha = (float)n_minimapTransparency;
 			if (largeMap) {
 				alpha = zoomState;
 			}

@@ -86,7 +86,7 @@ DEFINE_SPADES_SETTING(cg_playerNameX, "0");
 DEFINE_SPADES_SETTING(cg_playerNameY, "0");
 DEFINE_SPADES_SETTING(br_LuckView, "1");
 DEFINE_SPADES_SETTING(n_StatsColor, "0");
-
+DEFINE_SPADES_SETTING(n_hudTransparency, "1");
 
 // ADDED: Settings
 SPADES_SETTING(dd_specNames);
@@ -556,7 +556,7 @@ namespace spades {
 				Handle<IImage> ammoIcon;
 				float iconWidth, iconHeight;
 				float spacing = 2.f;
-				int stockNum;
+			int stockNum;
 				int warnLevel;
 
 				if (p->IsToolWeapon()) {
@@ -592,7 +592,7 @@ namespace spades {
 						if (clip >= i + 1) {
 							renderer->SetColorAlphaPremultiplied(MakeVector4(1, 1, 1, 1));
 						} else {
-							renderer->SetColorAlphaPremultiplied(MakeVector4(0.4, 0.4, 0.4, 1));
+							renderer->SetColorAlphaPremultiplied(MakeVector4(0.4, 0.4, 0.4, 0.4));
 						}
 
 						renderer->DrawImage(ammoIcon, AABB2(x, y, iconWidth, iconHeight));
@@ -612,7 +612,7 @@ namespace spades {
 					}
 				}
 
-				Vector4 numberColor = {1, 1, 1, 1};
+				Vector4 numberColor = {1, 1, 1, (float)n_hudTransparency};
 
 				if (stockNum == 0) {
 					numberColor.y = 0.3f;
@@ -620,16 +620,106 @@ namespace spades {
 				} else if (stockNum <= warnLevel) {
 					numberColor.z = 0.3f;
 				}
-
+				
+             
+				int clip = weap->GetAmmo();
+				
+				Vector4 clipNumberColor;
+				
 				char buf[64];
-				sprintf(buf, "%d", stockNum);
+				char buff[64];
+				
+				if (p->IsToolWeapon()) {
+				sprintf(buff, "%d", clip);
+                sprintf(buf, "/ %d",stockNum);	
+				
+				}else{
+					
+				sprintf(buf, "%d",stockNum);
+				}
+				
 				font = fontManager->GetSquareDesignFont();
 				std::string stockStr = buf;
+				std::string clipStr = buff;
 				Vector2 size = font->Measure(stockStr);
 				Vector2 pos = MakeVector2(scrWidth - 16.f, scrHeight - 16.f - iconHeight);
+				Vector2 pos2 = MakeVector2(scrWidth - 50.f, scrHeight - 16.f - iconHeight);
+				Vector2 posSmg = MakeVector2(scrWidth - 50.f, scrHeight - 16.f - iconHeight);
+				Vector2 posSmg2 = MakeVector2(scrWidth - 65.f, scrHeight - 16.f - iconHeight);
+				posSmg -= size;
+				posSmg2 -= size;
 				pos -= size;
-				font->DrawShadow(stockStr, pos, 1.f, numberColor, MakeVector4(0, 0, 0, 0.5));
+				pos2 -= size;
+				
+				if (p->IsToolWeapon()) {
+					switch (weap->GetWeaponType()) {
+						case RIFLE_WEAPON:
+				            if(clip >= 8){
+				
+			                clipNumberColor = Vector4{1, 1, 1, (float)n_hudTransparency};
+		    
+		                    }else if(clip >= 4 && clip < 8){
+				
+		                  	clipNumberColor = Vector4{1, 1, 0, (float)n_hudTransparency};	
+			
+		                   	}else{
 
+		                	clipNumberColor = Vector4{1, 0, 0, (float)n_hudTransparency};
+		                	}
+							
+							font->DrawShadow(clipStr, pos2, 1.f, clipNumberColor, MakeVector4(0, 0, 0, (float)n_hudTransparency));
+							font->DrawShadow(stockStr, pos, 1.f, numberColor, MakeVector4(0, 0, 0, (float)n_hudTransparency));
+				            break;
+				        case SMG_WEAPON:
+							if(clip >= 20){
+				
+			                clipNumberColor = Vector4{1, 1, 1, (float)n_hudTransparency};
+		    
+		                    }else if(clip >= 10 && clip < 20){
+				
+		                  	clipNumberColor = Vector4{1, 1, 0, (float)n_hudTransparency};	
+			
+		                 	}else{
+				
+		                	clipNumberColor = Vector4{1, 0, 0, (float)n_hudTransparency};
+		                	}
+							
+							
+							if(clip >= 20 && clip < 31){
+							font->DrawShadow(clipStr, posSmg2, 1.f, clipNumberColor, MakeVector4(0, 0, 0, (float)n_hudTransparency));
+							
+							}else{
+							font->DrawShadow(clipStr, posSmg, 1.f, clipNumberColor, MakeVector4(0, 0, 0, (float)n_hudTransparency));
+							}
+			               
+							
+							font->DrawShadow(stockStr, pos, 1.f, numberColor, MakeVector4(0, 0, 0, (float)n_hudTransparency));
+							
+							break;
+						case SHOTGUN_WEAPON:
+							if(clip >= 5){
+				
+			                clipNumberColor = Vector4{1, 1, 1, (float)n_hudTransparency};
+		    
+		                    }else if(clip >= 3 && clip < 5){
+				
+		                  	clipNumberColor = Vector4{1, 1, 0, (float)n_hudTransparency};	
+			
+		                   	}else{
+
+		                	clipNumberColor = Vector4{1, 0, 0, (float)n_hudTransparency};
+		                	}
+							
+							
+							font->DrawShadow(clipStr, pos2, 1.f, clipNumberColor, MakeVector4(0, 0, 0, (float)n_hudTransparency));
+							font->DrawShadow(stockStr, pos, 1.f, numberColor, MakeVector4(0, 0, 0, (float)n_hudTransparency));
+							break;
+						default: SPInvalidEnum("weap->GetWeaponType()", weap->GetWeaponType());
+				}
+				}else{
+				font->DrawShadow(stockStr, pos, 1.f, numberColor, MakeVector4(0, 0, 0, (float)n_hudTransparency));
+                }
+				
 				// draw "press ... to reload"
 				{
 					std::string msg = "";
