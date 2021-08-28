@@ -70,7 +70,7 @@ namespace spades {
         void SetupRenderer() {
             // load map
             @renderer.GameMap = GameMap("Maps/Title.vxl");
-            renderer.FogColor = Vector3(0.1f, 0.10f, 0.1f);
+            renderer.FogColor = Vector3(0.f, 0.f, 0.5f);
             renderer.FogDistance = 128.f;
             time = -1.f;
 

@@ -33,7 +33,7 @@
 
 DEFINE_SPADES_SETTING(BindCommand1, "/ratio");
 DEFINE_SPADES_SETTING(BindCommand2, "/accuracy");
-DEFINE_SPADES_SETTING(BindCommand3, "/an Nuceto");
+DEFINE_SPADES_SETTING(BindCommand3, "/an");
 DEFINE_SPADES_SETTING(BindCommand4, "/streak");
 DEFINE_SPADES_SETTING(BindCommand5, "/login");
 DEFINE_SPADES_SETTING(BindCommand6, "/login");

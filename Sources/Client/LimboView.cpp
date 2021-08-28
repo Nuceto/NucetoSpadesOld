@@ -184,7 +184,7 @@ namespace spades {
 				Vector2 pos;
 				pos.x = left + 10.f;
 				pos.y = top + 10.f;
-				font->DrawShadow(msg, pos, 1.f, MakeVector4(1, 1, 1, 1),
+				font->DrawShadow(msg, pos, 1.f, MakeVector4(0, 0, 0, 0.6),
 				                 MakeVector4(0, 0, 0, 0.4f));
 			}
 			if (selectedTeam != 2) {
@@ -192,7 +192,7 @@ namespace spades {
 				Vector2 pos;
 				pos.x = left + 260.f;
 				pos.y = top + 10.f;
-				font->DrawShadow(msg, pos, 1.f, MakeVector4(1, 1, 1, 1),
+				font->DrawShadow(msg, pos, 1.f, MakeVector4(0, 0, 0, 0.6),
 				                 MakeVector4(0, 0, 0, 0.4f));
 			}
 
@@ -219,7 +219,7 @@ namespace spades {
 					default: selected = false;
 				}
 
-				Vector4 fillColor = {0.2f, 0.2f, 0.2f, 0.5f};
+				Vector4 fillColor = {0, 0, 0, 0.6f};
 				Vector4 ringColor = {0, 0, 0, 0};
 
 				if (item.hover) {

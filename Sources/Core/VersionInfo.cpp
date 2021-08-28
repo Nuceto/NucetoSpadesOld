@@ -21,32 +21,32 @@ std::string VersionInfo::GetVersionInfo() {
 	std::string windowsVersion;
 
 	if (IsWindowsXPOrGreater() && !IsWindowsVistaOrGreater()) {
-		windowsVersion = "Windows XP | NucetoSpades 0.2 -> https://github.com/Nuceto/NucetoSpades";
+		windowsVersion = "Windows XP | NucetoSpades 0.3 | https://github.com/Nuceto/NucetoSpades";
 	} else if (IsWindowsVistaOrGreater() && !IsWindows7OrGreater()) {
-		windowsVersion = "Windows Vista | NucetoSpades 0.2 -> https://github.com/Nuceto/NucetoSpades";
+		windowsVersion = "Windows Vista | NucetoSpades 0.3 | https://github.com/Nuceto/NucetoSpades";
 	} else if (IsWindows7OrGreater() && !IsWindows8OrGreater()) {
-		windowsVersion = "Windows 7 | NucetoSpades 0.2 -> https://github.com/Nuceto/NucetoSpades";
+		windowsVersion = "Windows 7 | NucetoSpades 0.3 | https://github.com/Nuceto/NucetoSpades";
 	} else if (IsWindows8OrGreater() && !IsWindows8Point1OrGreater()) {
-		windowsVersion = "Windows 8 | NucetoSpades 0.2 -> https://github.com/Nuceto/NucetoSpades";
+		windowsVersion = "Windows 8 | NucetoSpades 0.3 | https://github.com/Nuceto/NucetoSpades";
 	} else if (IsWindows8Point1OrGreater()) {
-		windowsVersion = "Windows 8.1 | NucetoSpades 0.2 -> https://github.com/Nuceto/NucetoSpades";
+		windowsVersion = "Windows 8.1 | NucetoSpades 0.3 | https://github.com/Nuceto/NucetoSpades";
 	} else {
 		// Default to Windows 10
 		// See https://github.com/yvt/openspades/pull/528 for reason.
-		windowsVersion = "Windows 10 | NucetoSpades 0.2 -> https://github.com/Nuceto/NucetoSpades";
+		windowsVersion = "Windows 10 | NucetoSpades 0.3 | https://github.com/Nuceto/NucetoSpades";
 	}
 
 	// Might be a greater version, but the new Microsoft
 	// API doesn't support checking for specific versions.
 
 	if (IsWindowsServer())
-		windowsVersion += " Server";
+		windowsVersion += " Server | NucetoSpades 0.3 | https://github.com/Nuceto/NucetoSpades";
 	return windowsVersion;
 #elif defined(__FreeBSD__)
-	return std::string("FreeBSD");
+	return std::string("FreeBSD | NucetoSpades 0.3 | https://github.com/Nuceto/NucetoSpades";
 #elif defined(__OpenBSD__)
-	return std::string("OpenBSD");
+	return std::string("OpenBSD | NucetoSpades 0.3 | https://github.com/Nuceto/NucetoSpades";
 #else
-	return std::string("Unknown OS");
+	return std::string("Unknown | NucetoSpades 0.3 | https://github.com/Nuceto/NucetoSpades";
 #endif
 }

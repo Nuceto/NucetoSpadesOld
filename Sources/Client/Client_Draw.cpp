@@ -1008,7 +1008,7 @@ namespace spades {
 
 			std::string str = std::to_string(p->GetHealth());
 
-			Vector4 numberColor = {1, 1, 1, 1};
+			Vector4 numberColor = {1, 1, 1, (float)n_hudTransparency};
 
 			if (p->GetHealth() == 0) {
 				numberColor.y = 0.3f;
@@ -1021,7 +1021,7 @@ namespace spades {
 			Vector2 size = font->Measure(str);
 			Vector2 pos = MakeVector2(16.f, scrHeight - 16.f);
 			pos.y -= size.y;
-			font->DrawShadow(str, pos, 1.f, numberColor, MakeVector4(0, 0, 0, 0.5));
+			font->DrawShadow(str, pos, 1.f, numberColor, MakeVector4(0, 0, 0, (float)n_hudTransparency));
 		}
 
 		void Client::Draw2DWithWorld() {
@@ -1221,18 +1221,18 @@ namespace spades {
 			
 			if(fps >= 60){
 				
-			fpsColor = Vector4(0.f, 1.f, 0.f, 1.f);
+			fpsColor = Vector4(0.f, 1.f, 0.f, (float)n_hudTransparency);
 		    
 		    }else if(fps >= 20 && fps < 60){
 				
-			fpsColor = Vector4(1.f, 1.f, 0.f, 1.f);	
+			fpsColor = Vector4(1.f, 1.f, 0.f, (float)n_hudTransparency);	
 			
 			}else{
 				
-			fpsColor = Vector4(1.f, 0.f, 0.f, 1.f);
+			fpsColor = Vector4(1.f, 0.f, 0.f, (float)n_hudTransparency);
 			}
 			
-			font->DrawShadow(strFps, pos + Vector2(margin, margin), 1.f, fpsColor, Vector4(0.f, 0.f, 0.f, 0.5f));
+			font->DrawShadow(strFps, pos + Vector2(margin, margin), 1.f, fpsColor, Vector4(0.f, 0.f, 0.f, (float)n_hudTransparency));
 			
 			//ups
 			auto ups = upsCounter.GetFps();
@@ -1240,18 +1240,18 @@ namespace spades {
 			
 			if(ups >= 9.00){
 				
-			upsColor = Vector4(0.f, 1.f, 0.f, 1.f);
+			upsColor = Vector4(0.f, 1.f, 0.f, (float)n_hudTransparency);
 		    
 		    }else if(ups >= 8 && ups < 9){
 				
-			upsColor = Vector4(1.f, 1.f, 0.f, 1.f);	
+			upsColor = Vector4(1.f, 1.f, 0.f, (float)n_hudTransparency);	
 			
 			}else{
 				
-			upsColor = Vector4(1.f, 0.f, 0.f, 1.f);
+			upsColor = Vector4(1.f, 0.f, 0.f, (float)n_hudTransparency);
 			}
 			
-			font->DrawShadow(strUps, pos + Vector2(70.f, 5.f), 1.f, upsColor, Vector4(0.f, 0.f, 0.f, 0.5f));
+			font->DrawShadow(strUps, pos + Vector2(70.f, 5.f), 1.f, upsColor, Vector4(0.f, 0.f, 0.f, (float)n_hudTransparency));
 			
 			//ping
 			auto ping = net->GetPing();
@@ -1260,23 +1260,23 @@ namespace spades {
 			
 			if(ping <= 100){
 				
-			pingColor = Vector4(0.f, 1.f, 0.f, 1.f);
+			pingColor = Vector4(0.f, 1.f, 0.f, (float)n_hudTransparency);
 		    
 		    }else if(ping >= 101 && ping < 290){
 				
-			pingColor = Vector4(1.f, 1.f, 0.f, 1.f);	
+			pingColor = Vector4(1.f, 1.f, 0.f, (float)n_hudTransparency);	
 			
 			}else{
 				
-			pingColor = Vector4(1.f, 0.f, 0.f, 1.f);
+			pingColor = Vector4(1.f, 0.f, 0.f, (float)n_hudTransparency);
 			}
 			
 			
-			font->DrawShadow(strPing, pos + Vector2(136.f, 5.f), 1.f, pingColor, Vector4(0.f, 0.f, 0.f, 0.5f));
+			font->DrawShadow(strPing, pos + Vector2(136.f, 5.f), 1.f, pingColor, Vector4(0.f, 0.f, 0.f, (float)n_hudTransparency));
 			
 
-			//up-down
-			font->DrawShadow(strUpDown, pos + Vector2(230.f, 5.f), 1.f, Vector4(1.f, 1.f, 1.f, 1.f), Vector4(0.f, 0.f, 0.f, 0.5f));
+			//up/down
+			font->DrawShadow(strUpDown, pos + Vector2(230.f, 5.f), 1.f, Vector4(1.f, 1.f, 1.f, (float)n_hudTransparency), Vector4(0.f, 0.f, 0.f, (float)n_hudTransparency));
 			
 			
 			}

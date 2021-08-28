@@ -46,7 +46,7 @@ namespace spades {
 
 			{
 				spades::ui::Label label(Manager);
-				label.BackgroundColor = Vector4(0, 0, 0, 0.4f);
+				label.BackgroundColor = Vector4(0.1f, 0.1f, 1, 0.3f);
 				label.Bounds = Bounds;
 				AddChild(label);
 			}
@@ -59,7 +59,7 @@ namespace spades {
 
 			AddTab(GameOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Game Options"));
 			AddTab(ControlOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Controls"));
-			AddTab(TargetOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Target"));
+			AddTab(ModsOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Mods"));
 			AddTab(MiscOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Misc"));
 
 			{
@@ -620,6 +620,12 @@ namespace spades {
 				array<string> = {_Tr("Preferences", "ON"), _Tr("Preferences", "REVERSED"), _Tr("Preferences", "OFF")},
 				array<int> = {1, -1, 0}, enabled);
 		}
+		
+		void Add3toggle(string caption, string configName, bool enabled = true) {
+			AddChoiceField(caption, configName,
+				array<string> = {_Tr("Preferences", "1"), _Tr("Preferences", "2 (r_dlights)"), _Tr("Preferences", "OFF")},
+				array<int> = {1, 2, 0}, enabled);
+		}
 
 		void FinishLayout() {
 			spades::ui::ListView list(Parent.Manager);
@@ -651,19 +657,6 @@ namespace spades {
 			layouter.AddChoiceField(_Tr("Preferences", "Particles"), "cg_particles",
 				array<string> = {_Tr("Preferences", "NORMAL"), _Tr("Preferences", "LESS"), _Tr("Preferences", "OFF")},
 				array<int> = {2, 1, 0});
-				
-				
-		    layouter.AddHeading(_Tr("Preferences", "Mods"));			
-			layouter.AddInputField(_Tr("Preferences", "BindCommand1"), "BindCommand1");
-			layouter.AddInputField(_Tr("Preferences", "BindCommand2"), "BindCommand2");
-			layouter.AddInputField(_Tr("Preferences", "BindCommand3"), "BindCommand3");
-			layouter.AddInputField(_Tr("Preferences", "BindCommand4"), "BindCommand4");
-			layouter.AddInputField(_Tr("Preferences", "BindCommand5"), "BindCommand5");
-			layouter.AddInputField(_Tr("Preferences", "BindCommand6"), "BindCommand6");
-			layouter.AddToggleField(_Tr("Preferences", "BR LuckView"), "br_LuckView");
-			layouter.AddToggleField(_Tr("Preferences", "Chameleon laser"), "v_laser");
-			layouter.AddInputField(_Tr("Preferences", "Chameleon laserColour(r-g-b)"), "v_laserColour");
-																
 
 			layouter.AddHeading(_Tr("Preferences", "OpenGL Effects"));														// ADDED
 			layouter.AddToggleField(_Tr("Preferences", "Outlines"), "cg_outlines");											// ADDED
@@ -715,15 +708,6 @@ namespace spades {
 				ConfigNumberFormatter(2, "", "^"));
 			layouter.AddToggleField(_Tr("Preferences", "Invert Y-axis Mouse Input"), "cg_invertMouseY");
 			
-			layouter.AddHeading(_Tr("Preferences", "KeyBinds"));
-			layouter.AddControl(_Tr("Preferences", "keyBind1"), "keyBind1");
-			layouter.AddControl(_Tr("Preferences", "keyBind2"), "keyBind2");
-			layouter.AddControl(_Tr("Preferences", "keyBind3"), "keyBind3");
-			layouter.AddControl(_Tr("Preferences", "keyBind4"), "keyBind4");
-			layouter.AddControl(_Tr("Preferences", "keyBind5"), "keyBind5");
-			layouter.AddControl(_Tr("Preferences", "keyBind6"), "keyBind6");
-			
-			
 			
 			layouter.AddHeading(_Tr("Preferences", "Game keys"));
 			layouter.AddControl(_Tr("Preferences", "Reload"), "cg_keyReloadWeapon");
@@ -760,12 +744,43 @@ namespace spades {
 		}
 	}
 	
-	class TargetOptionsPanel: spades::ui::UIElement {
-		TargetOptionsPanel(spades::ui::UIManager@ manager, PreferenceViewOptions@ options, FontManager@ fontManager) {
+	class ModsOptionsPanel: spades::ui::UIElement {
+		ModsOptionsPanel(spades::ui::UIManager@ manager, PreferenceViewOptions@ options, FontManager@ fontManager) {
 			super(manager);
 			
 	StandardPreferenceLayouter layouter(this, fontManager);
-			layouter.AddHeading(_Tr("Preferences", "Target Options"));
+			
+			
+	layouter.AddHeading(_Tr("Preferences", "Mods"));
+	layouter.AddToggleField(_Tr("Preferences", "BR LuckView"), "br_LuckView");
+	layouter.Add3toggle(_Tr("Preferences", "Chameleon laser"), "v_laser");
+	layouter.AddInputField(_Tr("Preferences", "Chameleon laserColour(r-g-b)"), "v_laserColour");
+	layouter.AddSliderField(_Tr("Preferences", "HudTransparency"), "n_hudTransparency", 0, 1., 0.1, ConfigNumberFormatter(1, "x"));
+	layouter.AddSliderField(_Tr("Preferences", "MiniMapTransparency"), "n_minimapTransparency", 0, 1., 0.1, ConfigNumberFormatter(1, "x"));
+	layouter.AddToggleField(_Tr("Preferences", "Stats Color"), "n_StatsColor");
+	
+	layouter.AddHeading(_Tr("Preferences", "Binds"));
+    layouter.AddControl(_Tr("Preferences", "keyBind1"), "keyBind1");	
+	layouter.AddInputField(_Tr("Preferences", "BindCommand1"), "BindCommand1");
+	layouter.AddHeading(_Tr("", ""));
+	layouter.AddControl(_Tr("Preferences", "keyBind2"), "keyBind2");
+	layouter.AddInputField(_Tr("Preferences", "BindCommand2"), "BindCommand2");
+	layouter.AddHeading(_Tr("", ""));
+	layouter.AddControl(_Tr("Preferences", "keyBind3"), "keyBind3");
+	layouter.AddInputField(_Tr("Preferences", "BindCommand3"), "BindCommand3");
+	layouter.AddHeading(_Tr("", ""));
+	layouter.AddControl(_Tr("Preferences", "keyBind4"), "keyBind4");
+	layouter.AddInputField(_Tr("Preferences", "BindCommand4"), "BindCommand4");
+	layouter.AddHeading(_Tr("", ""));
+	layouter.AddControl(_Tr("Preferences", "keyBind5"), "keyBind5");
+	layouter.AddInputField(_Tr("Preferences", "BindCommand5"), "BindCommand5");
+	layouter.AddHeading(_Tr("", ""));
+	layouter.AddControl(_Tr("Preferences", "keyBind6"), "keyBind6");
+	layouter.AddInputField(_Tr("Preferences", "BindCommand6"), "BindCommand6");
+	
+	
+			
+	layouter.AddHeading(_Tr("Preferences", "Target Options"));
 	layouter.AddToggleField(_Tr("Preferences", "Target"), "n_Target");	
     layouter.AddSliderField(_Tr("Preferences", "Size"), "n_TargetSize", 0.0008, 0.02, 0.0008,
 				ConfigNumberFormatter(1, "x"));

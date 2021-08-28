@@ -16,6 +16,7 @@
 
 
 SPADES_SETTING(cg_minimapSize);
+SPADES_SETTING(n_hudTransparency, "1");
 
 spades::client::LuckView* spades::client::LuckView::instance = NULL;
 
@@ -37,7 +38,7 @@ void RightJustText(spades::client::IRenderer *renderer, spades::client::IFont *f
 		y = 256;
 	y += 32 + lineno * size.y;
 
-	font->DrawShadow(buf, spades::MakeVector2(x, y), 1, spades::MakeVector4(1, 1, 1, 1), spades::MakeVector4(0, 0, 0, 0.5));
+	font->DrawShadow(buf, spades::MakeVector2(x, y), 1, spades::MakeVector4(1, 1, 1, (float)n_hudTransparency), spades::MakeVector4(0, 0, 0, (float)n_hudTransparency));
 }
 
 namespace spades {
