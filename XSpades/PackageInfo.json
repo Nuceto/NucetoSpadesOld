@@ -1,0 +1,9 @@
+{
+    "Version": [0, 1, 3, 4],
+    "VersionText": "0.1.3",
+    "UpdateFeed": {
+        "Type": "Standard",
+        "Platform": "Mac",
+        "URL": "http://openspades.yvt.jp/api/version.json"
+    }
+}
