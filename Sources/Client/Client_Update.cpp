@@ -61,6 +61,8 @@ SPADES_SETTING(cg_shake);
 
 SPADES_SETTING(cg_holdAimDownSight);
 
+DEFINE_SPADES_SETTING(sov_analyze, "0");
+
 namespace spades {
 	namespace client {
 
@@ -990,9 +992,19 @@ namespace spades {
 				}
 			}
 
+			std::string BodyPart;
+
 			if (by == world->GetLocalPlayer() && hurtPlayer) {
 				net->SendHit(hurtPlayer->GetId(), type);
+				
+				if(sov_analyze){
+				if (type == HitTypeHead) { BodyPart = "Head"; }
+				if (type == HitTypeTorso) { BodyPart = "Body"; }
+				if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb"; }
 
+				chatWindow->AddMessage("Bullet hit: " + BodyPart + "  |  " + hurtPlayer->GetName());
+				
+				}
 				if (type == HitTypeHead) {
 					Handle<IAudioChunk> c =
 					  audioDevice->RegisterSound("Sounds/Feedback/HeadshotFeedback.opus");
