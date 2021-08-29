@@ -991,20 +991,60 @@ namespace spades {
 					audioDevice->Play(c, hitPos, param);
 				}
 			}
-
+			
 			std::string BodyPart;
+			
+			spades::client::Player *p = GetWorld()->GetLocalPlayer();
+			spades::client::Weapon *weap = p->GetWeapon();
+			if(sov_analyze){
+			if (p->IsToolWeapon()) {
+			switch (weap->GetWeaponType()) {
+				case RIFLE_WEAPON: 
+                if (by == world->GetLocalPlayer() && hurtPlayer) {
+				if (type == HitTypeHead) { BodyPart = "Head -100hp"; }
+				if (type == HitTypeTorso) { BodyPart = "Body -49hp"; }
+				if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -33hp"; }
 
-			if (by == world->GetLocalPlayer() && hurtPlayer) {
-				net->SendHit(hurtPlayer->GetId(), type);
+				chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+				}
+
+				break;
+				case SMG_WEAPON:
+				if (by == world->GetLocalPlayer() && hurtPlayer) {
+				if (type == HitTypeHead) { BodyPart = "Head -75hp"; }
+				if (type == HitTypeTorso) { BodyPart = "Body -29hp"; }
+				if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -18hp"; }
+
+				chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+				}
 				
-				if(sov_analyze){
+				break;
+				case SHOTGUN_WEAPON:
+				if (by == world->GetLocalPlayer() && hurtPlayer) {
+				if (type == HitTypeHead) { BodyPart = "Head -37hp"; }
+				if (type == HitTypeTorso) { BodyPart = "Body -27hp"; }
+				if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -16hp"; }
+
+				chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+				}
+				
+				break;
+			}
+			}else{
+
+				if (by == world->GetLocalPlayer() && hurtPlayer) {
 				if (type == HitTypeHead) { BodyPart = "Head"; }
 				if (type == HitTypeTorso) { BodyPart = "Body"; }
 				if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb"; }
 
-				chatWindow->AddMessage("Bullet hit: " + BodyPart + "  |  " + hurtPlayer->GetName());
-				
+				chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
 				}
+			}
+			}
+
+			if (by == world->GetLocalPlayer() && hurtPlayer) {
+				net->SendHit(hurtPlayer->GetId(), type);
+
 				if (type == HitTypeHead) {
 					Handle<IAudioChunk> c =
 					  audioDevice->RegisterSound("Sounds/Feedback/HeadshotFeedback.opus");
