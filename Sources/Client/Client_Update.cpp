@@ -1033,11 +1033,8 @@ namespace spades {
 			}else{
 
 				if (by == world->GetLocalPlayer() && hurtPlayer) {
-				if (type == HitTypeHead) { BodyPart = "Head"; }
-				if (type == HitTypeTorso) { BodyPart = "Body"; }
-				if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb"; }
 
-				chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+				chatWindow->AddMessage("Spade: Body  ->  " + hurtPlayer->GetName());
 				}
 			}
 			}
