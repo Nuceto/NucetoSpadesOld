@@ -993,16 +993,37 @@ namespace spades {
 			}
 			
 			std::string BodyPart;
-			
+			Weapon *weap = by->GetWeapon();
+
+			// do the shit
 			if (by == world->GetLocalPlayer() && hurtPlayer) {
 				net->SendHit(hurtPlayer->GetId(), type);
-				
-				if(sov_analyze){
-				if (type == HitTypeHead) { BodyPart = "Head"; }
-				if (type == HitTypeTorso) { BodyPart = "Body"; }
-				if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb"; }
 
-				chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+				// fixed by the epic sov on linux :sungl:
+				if(sov_analyze){
+					if (weap->GetWeaponType() == RIFLE_WEAPON) {
+						if (type == HitTypeHead) { BodyPart = "Head -100hp"; }
+						if (type == HitTypeTorso) { BodyPart = "Body -49hp"; }
+						if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -33hp"; }
+
+						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+					}
+
+					if (weap->GetWeaponType() == SMG_WEAPON) {
+						if (type == HitTypeHead) { BodyPart = "Head -75hp"; }
+						if (type == HitTypeTorso) { BodyPart = "Body -29hp"; }
+						if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -18hp"; }
+
+						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+					}
+
+					if(weap->GetWeaponType() == SHOTGUN_WEAPON){
+						if (type == HitTypeHead) { BodyPart = "Head -37hp"; }
+						if (type == HitTypeTorso) { BodyPart = "Body -27hp"; }
+						if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -16hp"; }
+
+						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+					}
 				}
 
 				if (type == HitTypeHead) {
