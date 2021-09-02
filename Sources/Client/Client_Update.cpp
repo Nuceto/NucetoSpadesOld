@@ -994,6 +994,7 @@ namespace spades {
 			
 			std::string BodyPart;
 			Weapon *weap = by->GetWeapon();
+			auto distance = std::to_string((hurtPlayer->GetEye() - by->GetEye()).GetLength());
 
 			// do the shit
 			if (by == world->GetLocalPlayer() && hurtPlayer) {
@@ -1001,12 +1002,14 @@ namespace spades {
 
 				// fixed by the epic sov on linux :sungl:
 				if(sov_analyze){
+					
+					if (by->GetTool() == Player::ToolWeapon){
 					if (weap->GetWeaponType() == RIFLE_WEAPON) {
 						if (type == HitTypeHead) { BodyPart = "Head -100hp"; }
 						if (type == HitTypeTorso) { BodyPart = "Body -49hp"; }
 						if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -33hp"; }
 
-						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName() + " | " + distance + " blocks");
 					}
 
 					if (weap->GetWeaponType() == SMG_WEAPON) {
@@ -1014,7 +1017,7 @@ namespace spades {
 						if (type == HitTypeTorso) { BodyPart = "Body -29hp"; }
 						if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -18hp"; }
 
-						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName() + " | " + distance + " blocks");
 					}
 
 					if(weap->GetWeaponType() == SHOTGUN_WEAPON){
@@ -1022,8 +1025,13 @@ namespace spades {
 						if (type == HitTypeTorso) { BodyPart = "Body -27hp"; }
 						if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -16hp"; }
 
-						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName());
+						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName() + " | " + distance + " blocks");
 					}
+				}else{
+				      
+                        chatWindow->AddMessage("Spade: Body  ->  " + hurtPlayer->GetName() + " | " + distance + " blocks");						
+					
+				}
 				}
 
 				if (type == HitTypeHead) {
