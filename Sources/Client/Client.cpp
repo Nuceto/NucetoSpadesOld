@@ -78,6 +78,9 @@ DEFINE_SPADES_SETTING(cg_outlineStrength, "2");
 DEFINE_SPADES_SETTING(s_volume, "100");
 // END OF ADDED
 
+DEFINE_SPADES_SETTING(n_mention, "0");
+DEFINE_SPADES_SETTING(n_mentionWord, "PutYourNameHere");
+
 namespace spades {
 	namespace client {
 
@@ -645,6 +648,8 @@ namespace spades {
 		                                   const std::string &msg) {
 			{
 				std::string s;
+				std::string m = " -> Mention";
+				
 				if (global)
 					//! Prefix added to global chat messages.
 					//!
@@ -657,6 +662,14 @@ namespace spades {
 				s += ChatWindow::TeamColorMessage(p->GetName(), p->GetTeamId());
 				s += ": ";
 				s += msg;
+				
+				size_t w;
+				
+				w = msg.find(n_mentionWord);
+				if (w != std::string::npos && n_mention){
+				s += ChatWindow::ColoredMessage(m, MsgColorGreen);
+				}
+				
 				chatWindow->AddMessage(s);
 			}
 			{
@@ -708,8 +721,20 @@ namespace spades {
 					return;
 				}
 			}
+			
+			std::string s;
+			
+			std::string pm = "PM -> ";
+			size_t pmw;
+			pmw = msg.find("PM from ");
+			
+			if (pmw != std::string::npos && n_mention){
+				s += ChatWindow::ColoredMessage(pm, MsgColorGreen);
+			}
+			s += msg;
+			
+			chatWindow->AddMessage(s);
 
-			chatWindow->AddMessage(msg);
 		}
 
 #pragma mark - Follow / Spectate
