@@ -79,6 +79,7 @@ namespace spades {
 			void AddMessage(const std::string &);
 			static std::string ColoredMessage(const std::string &, char);
 			static std::string TeamColorMessage(const std::string &, int);
+			static std::string TeamCoords(int, int);
 			static std::string killImage(int killType, int weapon);
 
 			void SetExpanded(bool value) { expanded = value; }

@@ -87,6 +87,8 @@ DEFINE_SPADES_SETTING(cg_playerNameY, "0");
 DEFINE_SPADES_SETTING(br_LuckView, "1");
 DEFINE_SPADES_SETTING(n_StatsColor, "0");
 DEFINE_SPADES_SETTING(n_hudTransparency, "1");
+SPADES_SETTING(cg_minimapSize);
+DEFINE_SPADES_SETTING(n_PlayerCoord, "1");
 
 // ADDED: Settings
 SPADES_SETTING(dd_specNames);
@@ -476,6 +478,65 @@ namespace spades {
 			renderer->DrawImage(img, AABB2(p1.x - 1, p1.y - 1, 1, p2.y - p1.y + 2));
 			renderer->DrawImage(img, AABB2(p1.x - 1, p2.y, p2.x - p1.x + 2, 1));
 			renderer->DrawImage(img, AABB2(p2.x, p1.y - 1, 1, p2.y - p1.y + 2));
+		}
+		
+		void Client::PlayerCoords(){
+			Player *p = GetWorld()->GetLocalPlayer();
+			
+			int x = p->GetPosition().x;
+			int y = p->GetPosition().y;
+			x = div(x,64).quot;
+			y = div(y,64).quot+1;
+
+			char buf[8];			
+
+			switch (x) 
+			{
+			case 0:
+				sprintf(buf, "A%i", y);
+				break;
+			case 1:
+				sprintf(buf, "B%i", y);
+				break;
+			case 2:
+				sprintf(buf, "C%i", y);
+				break;
+			case 3:
+				sprintf(buf, "D%i", y);
+				break;
+			case 4:
+				sprintf(buf, "E%i", y);
+				break;
+			case 5:
+				sprintf(buf, "F%i", y);
+				break;
+			case 6:
+				sprintf(buf, "G%i", y);
+				break;
+			case 7:
+				sprintf(buf, "H%i", y);
+				break;
+			}
+			
+			float ms = cg_minimapSize;
+	        if (ms < 32)
+	     	ms = 22;
+	        if (ms > 256)
+	    	ms = 246;
+	        ms += 50;
+			
+			float xpos = renderer->ScreenWidth() - ms;
+
+	        float ypos = cg_minimapSize;
+	        if (ypos < 32)
+	     	ypos = 32;
+	        if (ypos > 256)
+	    	ypos = 256;
+	        ypos -= 125;
+			
+				
+			IFont *font = fontManager->GetGuiFont();
+			font->DrawShadow(buf, Vector2(xpos,ypos), 1.3, MakeVector4(1, 1, 1, n_hudTransparency), MakeVector4(0, 0, 0, n_hudTransparency));
 		}
 
 
@@ -1047,6 +1108,10 @@ namespace spades {
 
 				if (p->GetTeamId() < 2) {
 					// player is not spectator
+					
+					if(n_PlayerCoord){
+					PlayerCoords();
+					}
 				
 					if(br_LuckView && p->IsAlive()){
 					luckView->Draw();

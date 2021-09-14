@@ -992,46 +992,30 @@ namespace spades {
 				}
 			}
 			
-			std::string BodyPart;
-			Weapon *weap = by->GetWeapon();
-			auto distance = std::to_string((hurtPlayer->GetEye() - by->GetEye()).GetLength());
-
-			// do the shit
 			if (by == world->GetLocalPlayer() && hurtPlayer) {
 				net->SendHit(hurtPlayer->GetId(), type);
 
-				// fixed by the epic sov on linux :sungl:
-				if(sov_analyze){
-					
-					if (by->GetTool() == Player::ToolWeapon){
-					if (weap->GetWeaponType() == RIFLE_WEAPON) {
-						if (type == HitTypeHead) { BodyPart = "Head -100hp"; }
-						if (type == HitTypeTorso) { BodyPart = "Body -49hp"; }
-						if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -33hp"; }
+				if (sov_analyze) {
+					char buf[64];
+					std::string str;
 
-						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName() + " | " + distance + " blocks");
+					std::string bodyPart;
+					switch (type) {
+						case HitTypeTorso: bodyPart = "Body"; break;
+						case HitTypeHead: bodyPart = "Head"; break;
+						case HitTypeArms:
+						case HitTypeLegs: bodyPart = "Limb"; break;
+						default: bodyPart = "Head"; break;
 					}
 
-					if (weap->GetWeaponType() == SMG_WEAPON) {
-						if (type == HitTypeHead) { BodyPart = "Head -75hp"; }
-						if (type == HitTypeTorso) { BodyPart = "Body -29hp"; }
-						if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -18hp"; }
+					auto name = ChatWindow::TeamColorMessage(hurtPlayer->GetName(), hurtPlayer->GetTeamId());
+					int dist = (int)floorf((hurtPlayer->GetEye() - by->GetEye()).GetLength() + 0.5F);
+					int dmg = by->GetWeapon()->GetDamage(type, 0.0F);
 
-						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName() + " | " + distance + " blocks");
-					}
+					sprintf(buf, "Bullet hit %s dist: %d blocks %s(-%d)", name.c_str(), dist, bodyPart.c_str(), dmg);
+					str += buf;
 
-					if(weap->GetWeaponType() == SHOTGUN_WEAPON){
-						if (type == HitTypeHead) { BodyPart = "Head -37hp"; }
-						if (type == HitTypeTorso) { BodyPart = "Body -27hp"; }
-						if (type == HitTypeArms || type == HitTypeLegs) { BodyPart = "Limb -16hp"; }
-
-						chatWindow->AddMessage("Bullet hit: " + BodyPart + "  ->  " + hurtPlayer->GetName() + " | " + distance + " blocks");
-					}
-				}else{
-				      
-                        chatWindow->AddMessage("Spade: Body  ->  " + hurtPlayer->GetName() + " | " + distance + " blocks");						
-					
-				}
+					chatWindow->AddMessage(str);
 				}
 
 				if (type == HitTypeHead) {

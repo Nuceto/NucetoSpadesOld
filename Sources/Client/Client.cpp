@@ -660,6 +660,9 @@ namespace spades {
 					//! The extra whitespace is not a typo.
 					s = _Tr("Client", "[Global] ");
 				s += ChatWindow::TeamColorMessage(p->GetName(), p->GetTeamId());
+				if(!global){
+				s += ChatWindow::TeamCoords(p->GetPosition().x, p->GetPosition().y);
+				}
 				s += ": ";
 				s += msg;
 				

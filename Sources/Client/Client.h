@@ -486,6 +486,8 @@ namespace spades {
 			static bool WallhackActive();
 			static spades::Vector3 TeamCol(unsigned int teamId);
 			// END OF ADDED
+			
+			void PlayerCoords();
 		};
 	}
 }
