@@ -535,6 +535,17 @@ namespace spades {
 			label.Bounds = AABB2(10.f, 0.f, 300.f, 32.f);
 			container.AddChild(label);
 		}
+		
+		//dankspades
+		void AddParag(string caption) {
+			spades::ui::UIElement@ container = CreateItem();
+
+			spades::ui::Label label(Parent.Manager);
+			label.Text = caption;
+			label.Alignment = Vector2(0.f, 0.f);
+			label.Bounds = AABB2(10.f, 0.f, 300.f, 32.f);
+			container.AddChild(label);
+		}
 
 		ConfigField@ AddInputField(string caption, string configName, bool enabled = true) {
 			spades::ui::UIElement@ container = CreateItem();
@@ -758,6 +769,8 @@ namespace spades {
 	layouter.AddSliderField(_Tr("Preferences", "HudTransparency"), "n_hudTransparency", 0, 1., 0.1, ConfigNumberFormatter(1, "x"));
 	layouter.AddSliderField(_Tr("Preferences", "MiniMapTransparency"), "n_minimapTransparency", 0, 1., 0.1, ConfigNumberFormatter(1, "x"));
 	layouter.AddToggleField(_Tr("Preferences", "Stats Color"), "n_StatsColor");
+	layouter.AddToggleField(_Tr("Preferences", "Sov Analyze"), "sov_analyze");
+	layouter.AddParag(_Tr("Preferences", "Damage value may vary depending on server configuration."));
 	
 	layouter.AddHeading(_Tr("Preferences", "Binds"));
     layouter.AddControl(_Tr("Preferences", "keyBind1"), "keyBind1");	

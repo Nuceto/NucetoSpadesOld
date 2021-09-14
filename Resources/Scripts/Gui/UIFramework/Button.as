@@ -187,19 +187,19 @@ namespace spades {
                 Vector2 size = Size;
                 Image@ img = renderer.RegisterImage("Gfx/White.tga");
                 if((Pressed && Hover) || Toggled) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.2f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.2f);
                 } else if(Hover) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.12f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.12f);
                 } else {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.07f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.07f);
                 }
                 renderer.DrawImage(img, AABB2(pos.x, pos.y, size.x, size.y));
                 if((Pressed && Hover) || Toggled) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.1f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.1f);
                 } else if(Hover) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.07f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.07f);
                 } else {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.03f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.03f);
                 }
                 renderer.DrawImage(img, AABB2(pos.x, pos.y, 1.f, size.y));
                 renderer.DrawImage(img, AABB2(pos.x, pos.y, size.x, 1.f));
@@ -225,11 +225,11 @@ namespace spades {
                 Vector2 size = Size;
                 Image@ img = renderer.RegisterImage("Gfx/White.tga");
                 if(Pressed && Hover) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.2f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.2f);
                 } else if(Hover) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.12f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.12f);
                 } else {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.00f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.00f);
                 }
                 renderer.DrawImage(img, AABB2(pos.x, pos.y, size.x, size.y));
                 Vector2 txtSize = Font.Measure(Caption);
@@ -281,13 +281,13 @@ namespace spades {
                 Vector2 size = Size;
                 Image@ img = renderer.RegisterImage("Gfx/White.tga");
                 if(!this.Enable) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.07f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.07f);
                 } else if((Pressed && Hover) || Toggled) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.2f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.2f);
                 } else if(Hover) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.12f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.12f);
                 } else {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.07f);
+                    renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 0.07f);
                 }
                 renderer.DrawImage(img, AABB2(pos.x, pos.y, size.x, size.y));
                 if(!this.Enable) {
@@ -305,7 +305,7 @@ namespace spades {
                 renderer.DrawImage(img, AABB2(pos.x, pos.y+size.y-1.f, size.x, 1.f));
                 Vector2 txtSize = Font.Measure(Caption);
                 Font.DrawShadow(Caption, pos + (size - txtSize) * 0.5f + Vector2(8.f, 0.f), 1.f,
-                    Vector4(1,1,1,this.Enable ? 1.f : 0.4f), Vector4(0,0,0,0.4f));
+                    Vector4(0.5f,0.5f,1,this.Enable ? 1.f : 0.4f), Vector4(0,0,0,0.4f));
 
                 if(Toggled) {
                     renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.6f);
@@ -332,11 +332,11 @@ namespace spades {
                 Vector2 pos = ScreenPosition;
                 Vector2 size = Size;
 
-                Vector4 color = Vector4(0.2f, 0.2f, 0.2f, 0.5f);
+                Vector4 color = Vector4(0.2f, 0.2f, 1.f, 0.5f);
                 if(Toggled or (Pressed and Hover)) {
-                    color = Vector4(0.7f, 0.7f, 0.7f, 0.9f);
+                    color = Vector4(0.7f, 0.7f, 1.f, 0.9f);
                 }else if(Hover) {
-                    color = Vector4(0.4f, 0.4f, 0.4f, 0.7f);
+                    color = Vector4(0.4f, 0.4f, 1.f, 0.7f);
                 }
                 if(!IsEnabled) {
                     color.w *= 0.5f;

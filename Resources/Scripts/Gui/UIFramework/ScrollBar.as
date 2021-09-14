@@ -142,11 +142,11 @@ namespace spades {
                 }
 
                 if(dragging) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.4f);
+                    renderer.ColorNP = Vector4(0.5f, 0.5f, 1.f, 0.4f);
                 } else if (hover) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.2f);
+                    renderer.ColorNP = Vector4(0.5f, 0.5f, 1.f, 0.2f);
                 } else {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.1f);
+                    renderer.ColorNP = Vector4(0.5f, 0.5f, 1.f, 0.1f);
                 }
                 renderer.DrawImage(img, AABB2(pos.x, pos.y, size.x, size.y));
             }

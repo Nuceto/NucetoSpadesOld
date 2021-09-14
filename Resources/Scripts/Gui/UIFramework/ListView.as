@@ -198,7 +198,7 @@ namespace spades {
                 renderer.ColorNP = Vector4(0.f, 0.f, 0.f, 0.2f);
                 renderer.DrawImage(img, AABB2(pos.x, pos.y, size.x, size.y));
 
-                renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.06f);
+                renderer.ColorNP = Vector4(0.f, 0.f, 1.f, 1.f);
                 renderer.DrawImage(img, AABB2(pos.x, pos.y, size.x, 1.f));
                 renderer.DrawImage(img, AABB2(pos.x, pos.y + size.y - 1.f, size.x, 1.f));
                 renderer.DrawImage(img, AABB2(pos.x, pos.y + 1.f, 1.f, size.y - 2.f));

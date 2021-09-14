@@ -79,9 +79,9 @@ namespace spades {
                 Image@ img = renderer.RegisterImage("Gfx/White.tga");
 
                 if (hover) {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.5f);
+                    renderer.ColorNP = Vector4(0.8f, 0.8f, 1.f, 0.8f);
                 } else {
-                    renderer.ColorNP = Vector4(1.f, 1.f, 1.f, 0.3f);
+                    renderer.ColorNP = Vector4(0.5f, 0.5f, 1.f, 0.5f);
                 }
                 renderer.DrawImage(img,
                     AABB2(pos.x + size.x * 0.5f - 3.f, pos.y,

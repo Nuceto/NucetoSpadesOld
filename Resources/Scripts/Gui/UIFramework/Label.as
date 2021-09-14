@@ -26,7 +26,7 @@ namespace spades {
         class Label: UIElement {
             string Text;
             Vector4 BackgroundColor = Vector4(0, 0, 0, 0);
-            Vector4 TextColor = Vector4(1, 1, 1, 1);
+            Vector4 TextColor = Vector4(0.7f, 0.7f, 1, 1);
             Vector2 Alignment = Vector2(0.f, 0.0f);
             float TextScale = 1.f;
 
