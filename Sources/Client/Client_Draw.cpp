@@ -64,15 +64,6 @@
 
 DEFINE_SPADES_SETTING(cg_hitIndicator, "1");
 DEFINE_SPADES_SETTING(cg_debugAim, "0");
-DEFINE_SPADES_SETTING(n_TargetOutline, "0");
-DEFINE_SPADES_SETTING(n_TargetOutlineColor1, "0");
-DEFINE_SPADES_SETTING(n_TargetOutlineColor2, "0");
-DEFINE_SPADES_SETTING(n_TargetOutlineColor3, "0");
-DEFINE_SPADES_SETTING(n_Target, "0");
-DEFINE_SPADES_SETTING(n_TargetColor1, "1");
-DEFINE_SPADES_SETTING(n_TargetColor2, "1");
-DEFINE_SPADES_SETTING(n_TargetColor3, "1");
-DEFINE_SPADES_SETTING(n_TargetSize, "0.01");
 SPADES_SETTING(cg_keyReloadWeapon);
 SPADES_SETTING(cg_keyJump);
 SPADES_SETTING(cg_keyAttack);
@@ -93,6 +84,19 @@ DEFINE_SPADES_SETTING(n_PlayerCoord, "1");
 // ADDED: Settings
 SPADES_SETTING(dd_specNames);
 // END OF ADDED
+
+DEFINE_SPADES_SETTING(n_Target, "0");
+DEFINE_SPADES_SETTING(n_TargetTransparency, "1");
+DEFINE_SPADES_SETTING(n_TargetSize, "2");
+DEFINE_SPADES_SETTING(n_TargetColorRed, "0");
+DEFINE_SPADES_SETTING(n_TargetColorGreen, "1");
+DEFINE_SPADES_SETTING(n_TargetColorBlue, "0");
+DEFINE_SPADES_SETTING(n_TargetDot, "1");
+DEFINE_SPADES_SETTING(n_TargetLines, "1");
+DEFINE_SPADES_SETTING(n_TargetLinesPos, "0");
+DEFINE_SPADES_SETTING(n_TargetLinesHeight, "20");
+DEFINE_SPADES_SETTING(n_TargetLinesDynamic, "0");
+DEFINE_SPADES_SETTING(n_TargetLinesDynamicMultiplier, "10");
 
 namespace spades {
 	namespace client {
@@ -412,72 +416,36 @@ namespace spades {
 
 
         void Client::DrawTarget() {
-			SPADES_MARK_FUNCTION();
-			Player &p = GetCameraTargetPlayer();
-			Weapon &w = *p.GetWeapon();
-			float spread = (float)n_TargetSize;
+			
+			float x = renderer->ScreenWidth() / 2;
+			float y = renderer->ScreenHeight() / 2;
+			float size = n_TargetSize;
+			float linepos = n_TargetLinesPos;
+			float lineh = n_TargetLinesHeight;
 
-			AABB2 boundary(0, 0, 0, 0);
-			for (int i = 0; i < 8; i++) {
-				Vector3 vec = p.GetFront();
-				if (i & 1)
-					vec.x += spread;
-				else
-					vec.x -= spread;
-				if (i & 2)
-					vec.y += spread;
-				else
-					vec.y -= spread;
-				if (i & 3)
-					vec.z += spread;
-				else
-					vec.z -= spread;
-
-				Vector3 viewPos;
-				viewPos.x = Vector3::Dot(vec, p.GetRight());
-				viewPos.y = Vector3::Dot(vec, p.GetUp());
-				viewPos.z = Vector3::Dot(vec, p.GetFront());
-
-				Vector2 p;
-				p.x = viewPos.x / viewPos.z;
-				p.y = viewPos.y / viewPos.z;
-				boundary.min.x = std::min(boundary.min.x, p.x);
-				boundary.min.y = std::min(boundary.min.y, p.y);
-				boundary.max.x = std::max(boundary.max.x, p.x);
-				boundary.max.y = std::max(boundary.max.y, p.y);
+			if(n_TargetLinesDynamic){
+			linepos -= GetSprintState() * (float)n_TargetLinesDynamicMultiplier;
 			}
+
 
 			Handle<IImage> img = renderer->RegisterImage("Gfx/White.tga");
-			boundary.min *= renderer->ScreenHeight() * .5f;
-			boundary.max *= renderer->ScreenHeight() * .5f;
-			boundary.min /= tanf(lastSceneDef.fovY * .5f);
-			boundary.max /= tanf(lastSceneDef.fovY * .5f);
-			IntVector3 cent;
-			cent.x = (int)(renderer->ScreenWidth() * .5f);
-			cent.y = (int)(renderer->ScreenHeight() * .5f);
-
-			IntVector3 p1 = cent;
-			IntVector3 p2 = cent;
-
-			p1.x += (int)floorf(boundary.min.x);
-			p1.y += (int)floorf(boundary.min.y);
-			p2.x += (int)ceilf(boundary.max.x);
-			p2.y += (int)ceilf(boundary.max.y);
 			
-			if (n_TargetOutline){
-
-			renderer->SetColorAlphaPremultiplied(MakeVector4((float)n_TargetOutlineColor1, (float)n_TargetOutlineColor2, (float)n_TargetOutlineColor3, 1));
-			renderer->DrawImage(img, AABB2(p1.x - 2, p1.y - 2, p2.x - p1.x + 4, 1));
-			renderer->DrawImage(img, AABB2(p1.x - 2, p1.y - 2, 1, p2.y - p1.y + 4));
-			renderer->DrawImage(img, AABB2(p1.x - 2, p2.y + 1, p2.x - p1.x + 4, 1));
-			renderer->DrawImage(img, AABB2(p2.x + 1, p1.y - 2, 1, p2.y - p1.y + 4));
-            
+			if(n_TargetDot){
+			renderer->SetColorAlphaPremultiplied(MakeVector4((float)n_TargetColorRed, 
+			(float)n_TargetColorGreen, (float)n_TargetColorBlue, (float)n_TargetTransparency));
+			renderer->DrawImage(img, AABB2(x - 2/size, y - (2/ size), 4/ size, 4/ size));
 			}
-			renderer->SetColorAlphaPremultiplied(MakeVector4((float)n_TargetColor1, (float)n_TargetColor2, (float)n_TargetColor3, 1));
-			renderer->DrawImage(img, AABB2(p1.x - 1, p1.y - 1, p2.x - p1.x + 2, 1));
-			renderer->DrawImage(img, AABB2(p1.x - 1, p1.y - 1, 1, p2.y - p1.y + 2));
-			renderer->DrawImage(img, AABB2(p1.x - 1, p2.y, p2.x - p1.x + 2, 1));
-			renderer->DrawImage(img, AABB2(p2.x, p1.y - 1, 1, p2.y - p1.y + 2));
+			
+			if(n_TargetLines){
+			renderer->SetColorAlphaPremultiplied(MakeVector4((float)n_TargetColorRed, 
+			(float)n_TargetColorGreen, (float)n_TargetColorBlue, (float)n_TargetTransparency));
+			renderer->DrawImage(img, AABB2(x - (2/ size), y - (7/ size)+linepos, 4/ size, -lineh/ size));
+			renderer->DrawImage(img, AABB2(x - (2/ size), y + (7/ size)-linepos, 4/ size, lineh/ size));
+			
+			renderer->DrawImage(img, AABB2(x - (6/ size)+linepos, y - (2/ size), -lineh/ size, 4/ size));
+			renderer->DrawImage(img, AABB2(x + (6/ size)-linepos, y - (2/ size), lineh/ size, 4/ size));
+			}
+
 		}
 		
 		void Client::PlayerCoords(){
@@ -592,7 +560,7 @@ namespace spades {
 				DrawDebugAim();
 			}
 			
-			if (n_Target) {
+			if (n_Target && GetAimDownState() < 1) {
 				DrawTarget();
 			}
 		}

@@ -46,12 +46,6 @@ namespace spades {
 
 			{
 				spades::ui::Label label(Manager);
-				label.BackgroundColor = Vector4(0.1f, 0.1f, 1, 0.3f);
-				label.Bounds = Bounds;
-				AddChild(label);
-			}
-			{
-				spades::ui::Label label(Manager);
 				label.BackgroundColor = Vector4(0, 0, 0, 0.8f);
 				label.Bounds = AABB2(0.f, ContentsTop - 13.f, Size.x, ContentsHeight + 27.f);
 				AddChild(label);
@@ -60,6 +54,7 @@ namespace spades {
 			AddTab(GameOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Game Options"));
 			AddTab(ControlOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Controls"));
 			AddTab(ModsOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Mods"));
+			AddTab(TargetPanel(Manager, options, fontManager), _Tr("Preferences", "Target"));
 			AddTab(MiscOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Misc"));
 
 			{
@@ -140,6 +135,13 @@ namespace spades {
 				AABB2(pos.x, pos.y + ContentsTop - 14.f, size.x, 1.f));
 			r.DrawImage(img,
 				AABB2(pos.x, pos.y + ContentsTop + ContentsHeight + 14.f, size.x, 1.f));
+				
+			Image@ img2 = r.RegisterImage("Gfx/White.tga");
+			ConfigItem red("n_TargetColorRed", "0");
+			ConfigItem green("n_TargetColorGreen", "0");
+			ConfigItem blue("n_TargetColorBlue", "0");
+			r.ColorNP = Vector4(red.FloatValue, green.FloatValue, blue.FloatValue, 1.f);
+			r.DrawImage(img2, AABB2(pos.y, pos.x, 20, 20));
 
 			UIElement::Render();
 		}
@@ -790,27 +792,42 @@ namespace spades {
 	layouter.AddHeading(_Tr("", ""));
 	layouter.AddControl(_Tr("Preferences", "keyBind6"), "keyBind6");
 	layouter.AddInputField(_Tr("Preferences", "BindCommand6"), "BindCommand6");
+
+    layouter.FinishLayout();
+	 }
+	}
 	
-	
-			
-	layouter.AddHeading(_Tr("Preferences", "Target Options"));
+	class TargetPanel: spades::ui::UIElement {
+		TargetPanel(spades::ui::UIManager@ manager, PreferenceViewOptions@ options, FontManager@ fontManager) {
+			super(manager);
+
+	StandardPreferenceLayouter layouter(this, fontManager);
+			layouter.AddHeading(_Tr("Preferences", "Target Options"));
 	layouter.AddToggleField(_Tr("Preferences", "Target"), "n_Target");	
-    layouter.AddSliderField(_Tr("Preferences", "Size"), "n_TargetSize", 0.0008, 0.02, 0.0008,
-				ConfigNumberFormatter(1, "x"));
-	layouter.AddHeading(_Tr("Preferences", "Outline Color"));			
-	layouter.AddSliderField(_Tr("Preferences", "Red"), "n_TargetOutline1", 0.1, 1., 0.1,
-				ConfigNumberFormatter(1, "x"));
-	layouter.AddSliderField(_Tr("Preferences", "Green"), "n_TargetOutline2", 0.1, 1., 0.1,
-				ConfigNumberFormatter(1, "x"));
-	layouter.AddSliderField(_Tr("Preferences", "Blue"), "n_TargetOutline3", 0.1, 1., 0.1,
+    layouter.AddSliderField(_Tr("Preferences", "Size"), "n_TargetSize", 1, 4, 0.1,
 				ConfigNumberFormatter(1, "x"));
 				
-	layouter.AddHeading(_Tr("Preferences", "Center Color"));			
-	layouter.AddSliderField(_Tr("Preferences", "Red"), "n_TargetColor1", 0.1, 1., 0.1,
+	layouter.AddToggleField(_Tr("Preferences", "Dot"), "n_TargetDot");	
+	layouter.AddToggleField(_Tr("Preferences", "Lines"), "n_TargetLines");	
+	 layouter.AddSliderField(_Tr("Preferences", "Linespos"), "n_TargetLinesPos", -64, 16, 1,
 				ConfigNumberFormatter(1, "x"));
-	layouter.AddSliderField(_Tr("Preferences", "Green"), "n_TargetColor2", 0.1, 1., 0.1,
+	 
+	 layouter.AddSliderField(_Tr("Preferences", "LinesHeight"), "n_TargetLinesHeight", 0, 500, 1,
+				ConfigNumberFormatter(1, "x"));	
+				
+	layouter.AddToggleField(_Tr("Preferences", "Dynamic Lines"), "n_TargetLinesDynamic");
+	layouter.AddSliderField(_Tr("Preferences", "Dynamic Lines Multiplier"), "n_TargetLinesDynamicMultiplier", 1, 100, 1,
 				ConfigNumberFormatter(1, "x"));
-	layouter.AddSliderField(_Tr("Preferences", "Blue"), "n_TargetColor3", 0.1, 1., 0.1,
+	
+	layouter.AddHeading(_Tr("Preferences", "Color"));
+    layouter.AddSliderField(_Tr("Preferences", "Transparency"), "n_TargetTransparency", 0, 1., 0.1,
+				ConfigNumberFormatter(1, "x"));
+				
+	layouter.AddSliderField(_Tr("Preferences", "Red"), "n_TargetColorRed", 0, 1., 0.1,
+				ConfigNumberFormatter(1, "x"));
+	layouter.AddSliderField(_Tr("Preferences", "Green"), "n_TargetColorGreen", 0, 1., 0.1,
+				ConfigNumberFormatter(1, "x"));
+	layouter.AddSliderField(_Tr("Preferences", "Blue"), "n_TargetColorBlue", 0, 1., 0.1,
 				ConfigNumberFormatter(1, "x"));
     layouter.FinishLayout();
 	 }
