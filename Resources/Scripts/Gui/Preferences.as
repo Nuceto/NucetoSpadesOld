@@ -55,6 +55,7 @@ namespace spades {
 			AddTab(ControlOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Controls"));
 			AddTab(ModsOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Mods"));
 			AddTab(TargetPanel(Manager, options, fontManager), _Tr("Preferences", "Target"));
+			AddTab(PalettePanel(Manager, options, fontManager), _Tr("Preferences", "Palette"));
 			AddTab(MiscOptionsPanel(Manager, options, fontManager), _Tr("Preferences", "Misc"));
 
 			{
@@ -832,6 +833,21 @@ namespace spades {
     layouter.FinishLayout();
 	 }
 	}
+	//dankspades
+	class PalettePanel: spades::ui::UIElement {
+			PalettePanel(spades::ui::UIManager@ manager, PreferenceViewOptions@ options, FontManager@ fontManager) {
+				super(manager);
+
+				StandardPreferenceLayouter layouter(this, fontManager);
+				layouter.AddParag(_Tr("Preferences", "Extra settings for Liza's color palette."));
+				layouter.AddHeading(_Tr("Preferences", "Extra Palette Settings"));
+				layouter.AddControl(_Tr("Preferences", "Invert Color"), "cg_keyPaletteInvert");
+				layouter.AddControl(_Tr("Preferences", "Random Color"), "cg_keyPaletteRandom");
+				layouter.AddControl(_Tr("Preferences", "Mix Capture Color"), "cg_keyPaletteMix");
+				layouter.AddParag(_Tr("Preferences", "Mixes blocks held and looked at."));
+				layouter.FinishLayout();
+			}
+		}
 
 
 	class MiscOptionsPanel: spades::ui::UIElement {
