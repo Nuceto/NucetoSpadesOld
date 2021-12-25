@@ -62,6 +62,8 @@ SPADES_SETTING(cg_shake);
 SPADES_SETTING(cg_holdAimDownSight);
 
 DEFINE_SPADES_SETTING(sov_analyze, "0");
+DEFINE_SPADES_SETTING(n_hitMarkSoundGain, "1");
+DEFINE_SPADES_SETTING(cg_killFeedImg, "1");
 
 namespace spades {
 	namespace client {
@@ -264,6 +266,12 @@ namespace spades {
 				hitFeedbackIconState -= dt * 4.f;
 				if (hitFeedbackIconState < 0.f)
 					hitFeedbackIconState = 0.f;
+			}
+			
+			if (targetfirestate > 0.f) {
+				targetfirestate -= dt * 4.f;
+				if (targetfirestate < 0.f)
+					targetfirestate = 0.f;
 			}
 
 			if (time > lastPosSentTime + 1.f && world->GetLocalPlayer()) {
@@ -625,15 +633,23 @@ namespace spades {
 				bool sprinting = clientPlayers[p->GetId()]
 				                   ? clientPlayers[p->GetId()]->GetSprintState() > 0.5f
 				                   : false;
-				Handle<IAudioChunk> c =
-				  p->GetWade() ? audioDevice->RegisterSound(SampleRandomElement(wsnds))
-				               : audioDevice->RegisterSound(SampleRandomElement(snds));
-				audioDevice->Play(c, p->GetOrigin(), AudioParam());
+								   
+				if (p->GetWade()){			  
+				Handle<IAudioChunk> a = audioDevice->RegisterSound(SampleRandomElement(wsnds));
+				audioDevice->Play(a, p->GetOrigin(), AudioParam());
+				}
+				
+				
+				Handle<IAudioChunk> b = audioDevice->RegisterSound(SampleRandomElement(snds));
+				
+				AudioParam params;
+				params.volume = 3.f;
+				audioDevice->Play(b, p->GetOrigin(), params);
+
 				if (sprinting && !p->GetWade()) {
-					AudioParam param;
-					param.volume *= clientPlayers[p->GetId()]->GetSprintState();
-					c = audioDevice->RegisterSound(SampleRandomElement(rsnds));
-					audioDevice->Play(c, p->GetOrigin(), param);
+
+					Handle<IAudioChunk> c = audioDevice->RegisterSound(SampleRandomElement(rsnds));
+					audioDevice->Play(c, p->GetOrigin(), params);
 				}
 			}
 		}
@@ -643,6 +659,7 @@ namespace spades {
 
 			if (p == world->GetLocalPlayer()) {
 				localFireVibrationTime = time;
+				targetfirestate = 1.f;
 			}
 
 			clientPlayers[p->GetId()]->FiredWeapon();
@@ -870,7 +887,17 @@ namespace spades {
 			bool isFriendlyFire = killer->GetTeamId() == victim->GetTeamId();
 			if (killer == victim)
 				isFriendlyFire = false;
+			
+			if(cg_killFeedImg){
 
+			Weapon *w = killer->GetWeapon(); // only used in case of KillTypeWeapon
+			
+			if(killer->GetWeapon() && kt == KillTypeHeadshot){
+			cause += ChatWindow::killImage(0, w ? w->GetWeaponType() : RIFLE_WEAPON);
+			cause += " ";
+			}
+			cause += ChatWindow::killImage(kt, w ? w->GetWeaponType() : RIFLE_WEAPON);
+			}else{
 			Weapon *w =
 			  killer ? killer->GetWeapon() : nullptr; // only used in case of KillTypeWeapon
 			switch (kt) {
@@ -906,7 +933,8 @@ namespace spades {
 					break;
 				default:
 					cause += "???";
-					break;
+					break;				
+			}
 			}
 
 			s += " [";
@@ -994,7 +1022,7 @@ namespace spades {
 			
 			if (by == world->GetLocalPlayer() && hurtPlayer) {
 				net->SendHit(hurtPlayer->GetId(), type);
-
+				
 				if (sov_analyze) {
 					char buf[64];
 					std::string str;
@@ -1005,17 +1033,23 @@ namespace spades {
 						case HitTypeHead: bodyPart = "Head"; break;
 						case HitTypeArms:
 						case HitTypeLegs: bodyPart = "Limb"; break;
-						default: bodyPart = "Head"; break;
+						default: bodyPart = "Body"; break;
 					}
 
 					auto name = ChatWindow::TeamColorMessage(hurtPlayer->GetName(), hurtPlayer->GetTeamId());
 					int dist = (int)floorf((hurtPlayer->GetEye() - by->GetEye()).GetLength() + 0.5F);
-					int dmg = by->GetWeapon()->GetDamage(type, 0.0F);
+					int dmg;
+					if(!by->IsToolWeapon()){
+					dmg = 49;	
+					}else{
+					dmg = by->GetWeapon()->GetDamage(type, 0.0F);
+					}
 
 					sprintf(buf, "Bullet hit %s dist: %d blocks %s(-%d)", name.c_str(), dist, bodyPart.c_str(), dmg);
 					str += buf;
 
 					chatWindow->AddMessage(str);
+					scriptedUI->RecordChatLog(str, MakeVector4(1.f, 1.f, 1.f, 1.f));
 				}
 
 				if (type == HitTypeHead) {
@@ -1024,6 +1058,13 @@ namespace spades {
 					AudioParam param;
 					param.volume = cg_hitFeedbackSoundGain;
 					audioDevice->PlayLocal(c, param);
+				}else if(by->GetWeapon()->GetWeaponType() != SHOTGUN_WEAPON){
+					
+				    Handle<IAudioChunk> x = audioDevice->RegisterSound("Sounds/Feedback/HitFeedback.wav");
+					AudioParam prm;
+					prm.volume = n_hitMarkSoundGain;
+					audioDevice->PlayLocal(x, prm);
+
 				}
 
 				hitFeedbackIconState = 1.f;

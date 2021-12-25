@@ -40,6 +40,7 @@
 #include <Core/Strings.h>
 
 SPADES_SETTING(cg_minimapPlayerColor);
+DEFINE_SPADES_SETTING(cg_scoreboardGuns, "1");
 
 namespace spades {
 	namespace client {
@@ -276,6 +277,19 @@ namespace spades {
 			float colWidth = (float)width / (float)cols;
 			extern int palette[32][3];
 			std::string colormode = cg_minimapPlayerColor;
+			
+			IImage *rifle;
+			IImage *smg;
+			IImage *shotgun;
+
+			if (cg_scoreboardGuns) {
+				rifle = renderer->RegisterImage("Gfx/Scoreboard/Rifle.png");
+				smg = renderer->RegisterImage("Gfx/Scoreboard/SMG.png");
+				shotgun = renderer->RegisterImage("Gfx/Scoreboard/Shotgun.png");
+
+				renderer->SetColorAlphaPremultiplied(MakeVector4(0, 0, 0, 1.f));
+			}
+			
 			for (int i = 0; i < numPlayers; i++) {
 				ScoreboardEntry &ent = entries[i];
 
@@ -303,6 +317,19 @@ namespace spades {
 				font->Draw(ent.name, MakeVector2(colX + 45.f, rowY), 1.f, color);
 
 				color = white;
+				if (cg_scoreboardGuns) {
+				Player& p = *world->GetPlayer(ent.id);
+                    IImage* weapon;
+                    switch (p.GetWeaponType()) {
+                        case RIFLE_WEAPON: weapon = rifle; break;
+                        case SMG_WEAPON: weapon = smg; break;
+                        case SHOTGUN_WEAPON: weapon = shotgun; break;
+                        default: weapon = rifle; break;
+					}
+
+					renderer->DrawImage(weapon, AABB2(colX + colWidth - 88.f, rowY, 50, 20));
+				}
+				
 
 				sprintf(buf, "%d", ent.score);
 				size = font->Measure(buf);

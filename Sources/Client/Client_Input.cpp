@@ -95,6 +95,7 @@ DEFINE_SPADES_SETTING(keyBind5, "F5");
 DEFINE_SPADES_SETTING(keyBind6, "F6");
 
 DEFINE_SPADES_SETTING(v_laser, "0");
+DEFINE_SPADES_SETTING(n_hitTestKey, "F8");
 
 namespace spades {
 	namespace client {
@@ -296,6 +297,18 @@ namespace spades {
 					}
 				}
 				return;
+			}
+			
+			if (CheckKey(n_hitTestKey, name) && down) {
+				Handle<IAudioChunk> chunk =
+				audioDevice->RegisterSound("Sounds/Misc/OpenMap.opus");
+				audioDevice->PlayLocal(chunk, AudioParam());
+				
+                if (hitTestSizeToggle == true) {
+					hitTestSizeToggle = false;
+				} else {
+					hitTestSizeToggle = true;
+				}			
 			}
 
 			if (name == "Escape") {

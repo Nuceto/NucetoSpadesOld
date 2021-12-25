@@ -86,6 +86,7 @@ SPADES_SETTING(dd_specNames);
 // END OF ADDED
 
 DEFINE_SPADES_SETTING(n_Target, "0");
+DEFINE_SPADES_SETTING(n_TargetOnScope, "0");
 DEFINE_SPADES_SETTING(n_TargetTransparency, "1");
 DEFINE_SPADES_SETTING(n_TargetSize, "2");
 DEFINE_SPADES_SETTING(n_TargetColorRed, "0");
@@ -95,8 +96,11 @@ DEFINE_SPADES_SETTING(n_TargetDot, "1");
 DEFINE_SPADES_SETTING(n_TargetLines, "1");
 DEFINE_SPADES_SETTING(n_TargetLinesPos, "0");
 DEFINE_SPADES_SETTING(n_TargetLinesHeight, "20");
-DEFINE_SPADES_SETTING(n_TargetLinesDynamic, "0");
+DEFINE_SPADES_SETTING(n_TargetLinesDynamicFire, "1");
+DEFINE_SPADES_SETTING(n_TargetLinesDynamicSprint, "1");
 DEFINE_SPADES_SETTING(n_TargetLinesDynamicMultiplier, "10");
+DEFINE_SPADES_SETTING(n_hitTestSize, "210");
+DEFINE_SPADES_SETTING(n_hitTestTransparency, "1");
 
 namespace spades {
 	namespace client {
@@ -423,22 +427,24 @@ namespace spades {
 			float linepos = n_TargetLinesPos;
 			float lineh = n_TargetLinesHeight;
 
-			if(n_TargetLinesDynamic){
+			if(n_TargetLinesDynamicFire){
+			linepos -= targetfirestate * (float)n_TargetLinesDynamicMultiplier;
+			}
+			if(n_TargetLinesDynamicSprint){
 			linepos -= GetSprintState() * (float)n_TargetLinesDynamicMultiplier;
 			}
-
-
+			
 			Handle<IImage> img = renderer->RegisterImage("Gfx/White.tga");
 			
 			if(n_TargetDot){
-			renderer->SetColorAlphaPremultiplied(MakeVector4((float)n_TargetColorRed, 
-			(float)n_TargetColorGreen, (float)n_TargetColorBlue, (float)n_TargetTransparency));
+			renderer->SetColorAlphaPremultiplied(MakeVector4((float)n_TargetColorRed / 255.f, 
+			(float)n_TargetColorGreen / 255.f, (float)n_TargetColorBlue / 255.f, (float)n_TargetTransparency));
 			renderer->DrawImage(img, AABB2(x - 2/size, y - (2/ size), 4/ size, 4/ size));
 			}
 			
 			if(n_TargetLines){
-			renderer->SetColorAlphaPremultiplied(MakeVector4((float)n_TargetColorRed, 
-			(float)n_TargetColorGreen, (float)n_TargetColorBlue, (float)n_TargetTransparency));
+			renderer->SetColorAlphaPremultiplied(MakeVector4((float)n_TargetColorRed / 255.f, 
+			(float)n_TargetColorGreen / 255.f, (float)n_TargetColorBlue / 255.f, (float)n_TargetTransparency));
 			renderer->DrawImage(img, AABB2(x - (2/ size), y - (7/ size)+linepos, 4/ size, -lineh/ size));
 			renderer->DrawImage(img, AABB2(x - (2/ size), y + (7/ size)-linepos, 4/ size, lineh/ size));
 			
@@ -559,9 +565,13 @@ namespace spades {
 			if (cg_debugAim && player.GetTool() == Player::ToolWeapon && player.IsAlive()) {
 				DrawDebugAim();
 			}
+			if(n_Target){
+			if(n_TargetOnScope){
+			DrawTarget();
+			}else if ((int)n_TargetOnScope == 0 && GetAimDownState() < 1) {
+			DrawTarget();
+			}
 			
-			if (n_Target && GetAimDownState() < 1) {
-				DrawTarget();
 			}
 		}
 
@@ -814,10 +824,15 @@ namespace spades {
 			}
 
 			if (debugHitTestImage) {
-				renderer->SetColorAlphaPremultiplied(MakeVector4(1, 1, 1, 1));
+				renderer->SetColorAlphaPremultiplied(MakeVector4(1, 1, 1, (float)n_hitTestTransparency));
 				int size = (int) (renderer->ScreenHeight() * 0.4);
 				if (size > renderer->ScreenWidth() * 0.4) size = (int) (renderer->ScreenWidth() * 0.4);
-				if (size > 210) size = 210;
+				
+				if(hitTestSizeToggle == true){
+				size = renderer->ScreenHeight() - 10;
+				}else{
+				if (size > (int)n_hitTestSize) size = (int)n_hitTestSize;
+				}
 				renderer->DrawImage(debugHitTestImage,
 					AABB2(renderer->ScreenWidth() - size, renderer->ScreenHeight() - size, size, size),
 					AABB2(128, 512 - 128, 256, 256 - 512)); // flip Y axis
@@ -1072,11 +1087,13 @@ namespace spades {
 					if (IsFirstPerson(GetCameraMode())) {
 						DrawFirstPersonHUD();
 					}
-				}
+				
 
 				if (p->GetTeamId() < 2) {
 					// player is not spectator
-					
+
+					DrawHitTestDebugger();
+
 					if(n_PlayerCoord){
 					PlayerCoords();
 					}
@@ -1094,6 +1111,7 @@ namespace spades {
 					
 				} else {
 					DrawSpectateHUD();
+				}
 				}
 
 				if (!cg_hideHud) {
@@ -1165,7 +1183,7 @@ namespace spades {
 		void Client::DrawStats() {
 			SPADES_MARK_FUNCTION();
 
-			if (!cg_stats)
+			if (!cg_stats || cg_hideHud)
 				return;
 
 			char buf[256];

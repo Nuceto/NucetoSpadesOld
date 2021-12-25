@@ -141,9 +141,13 @@ namespace spades {
 			ConfigItem red("n_TargetColorRed", "0");
 			ConfigItem green("n_TargetColorGreen", "0");
 			ConfigItem blue("n_TargetColorBlue", "0");
-			r.ColorNP = Vector4(red.FloatValue, green.FloatValue, blue.FloatValue, 1.f);
+			r.ColorNP = Vector4(red.FloatValue / 255.f, green.FloatValue / 255.f, blue.FloatValue / 255.f, 1.f);
 			r.DrawImage(img2, AABB2(pos.y, pos.x, 20, 20));
-
+			
+			Font@ font = this.Font;
+			string text = "<-- Target Color";
+			font.DrawShadow(text, Vector2(pos.x + 30, pos.y), 1.f,  Vector4(1.f, 1.f, 1.f, 0.8f), Vector4(0.f, 0.f, 0.f, 0.4f));
+		
 			UIElement::Render();
 		}
 
@@ -766,16 +770,33 @@ namespace spades {
 			
 			
 	layouter.AddHeading(_Tr("Preferences", "Mods"));
-	layouter.AddToggleField(_Tr("Preferences", "BR LuckView"), "br_LuckView");
+	
+	layouter.AddHeading(_Tr("Preferences", "BR Mods"));
+	layouter.AddToggleField(_Tr("Preferences", "LuckView"), "br_LuckView");
+	layouter.AddToggleField(_Tr("Preferences", "HitTest"), "cg_debugHitTest");
+	layouter.AddSliderField(_Tr("Preferences", "HitTest Size"), "n_hitTestSize", 0, 288., 1., ConfigNumberFormatter(1, "x"));
+	layouter.AddSliderField(_Tr("Preferences", "HitTest Transparency"), "n_hitTestTransparency", 0, 1., 0.1, ConfigNumberFormatter(1, "x"));
+	layouter.AddControl(_Tr("Preferences", "HitTest Toggle Zoom"), "n_hitTestKey");
+	layouter.AddHeading(_Tr("", ""));
+	
+	layouter.AddHeading(_Tr("Preferences", "Misc"));
 	layouter.Add3toggle(_Tr("Preferences", "Chameleon laser"), "v_laser");
 	layouter.AddInputField(_Tr("Preferences", "Chameleon laserColour(r-g-b)"), "v_laserColour");
 	layouter.AddSliderField(_Tr("Preferences", "HudTransparency"), "n_hudTransparency", 0, 1., 0.1, ConfigNumberFormatter(1, "x"));
 	layouter.AddSliderField(_Tr("Preferences", "MiniMapTransparency"), "n_minimapTransparency", 0, 1., 0.1, ConfigNumberFormatter(1, "x"));
+	layouter.AddSliderField(_Tr("Preferences", "Center Message Size"), "n_centerMessageSize", 0.71, 1., 0.01, ConfigNumberFormatter(2, "x"));
 	layouter.AddToggleField(_Tr("Preferences", "Stats Color"), "n_StatsColor");
+	layouter.AddToggleField(_Tr("Preferences", "KillFeed Images"), "cg_killFeedImg");
+	layouter.AddToggleField(_Tr("Preferences", "ScoreBoard Images"), "cg_scoreboardGuns");
 	layouter.AddToggleField(_Tr("Preferences", "Sov Analyze"), "sov_analyze");
 	layouter.AddParag(_Tr("Preferences", "Damage value may vary depending on server configuration."));
 	
+	layouter.AddToggleField(_Tr("Preferences", "Mention"), "n_mention");
+	layouter.AddInputField(_Tr("Preferences", "Mention Name"), "n_mentionWord");
+	
+	layouter.AddHeading(_Tr("", ""));
 	layouter.AddHeading(_Tr("Preferences", "Binds"));
+	layouter.AddToggleField(_Tr("Preferences", "Global Chat"), "n_globalCommand");
     layouter.AddControl(_Tr("Preferences", "keyBind1"), "keyBind1");	
 	layouter.AddInputField(_Tr("Preferences", "BindCommand1"), "BindCommand1");
 	layouter.AddHeading(_Tr("", ""));
@@ -803,20 +824,23 @@ namespace spades {
 			super(manager);
 
 	StandardPreferenceLayouter layouter(this, fontManager);
-			layouter.AddHeading(_Tr("Preferences", "Target Options"));
-	layouter.AddToggleField(_Tr("Preferences", "Target"), "n_Target");	
+	layouter.AddHeading(_Tr("Preferences", "Target Options"));
+	layouter.AddToggleField(_Tr("Preferences", "Hide Default Target"), "n_hideDefaultTarget");
+	layouter.AddToggleField(_Tr("Preferences", "Target"), "n_Target");
+	layouter.AddToggleField(_Tr("Preferences", "Target in scope"), "n_TargetOnScope");	
     layouter.AddSliderField(_Tr("Preferences", "Size"), "n_TargetSize", 1, 4, 0.1,
 				ConfigNumberFormatter(1, "x"));
 				
 	layouter.AddToggleField(_Tr("Preferences", "Dot"), "n_TargetDot");	
 	layouter.AddToggleField(_Tr("Preferences", "Lines"), "n_TargetLines");	
-	 layouter.AddSliderField(_Tr("Preferences", "Linespos"), "n_TargetLinesPos", -64, 16, 1,
+	layouter.AddSliderField(_Tr("Preferences", "Linespos"), "n_TargetLinesPos", -64, 16, 1,
 				ConfigNumberFormatter(1, "x"));
 	 
-	 layouter.AddSliderField(_Tr("Preferences", "LinesHeight"), "n_TargetLinesHeight", 0, 500, 1,
+	layouter.AddSliderField(_Tr("Preferences", "LinesHeight"), "n_TargetLinesHeight", 0, 500, 1,
 				ConfigNumberFormatter(1, "x"));	
 				
-	layouter.AddToggleField(_Tr("Preferences", "Dynamic Lines"), "n_TargetLinesDynamic");
+	layouter.AddToggleField(_Tr("Preferences", "Dynamic Lines Fire"), "n_TargetLinesDynamicFire");
+	layouter.AddToggleField(_Tr("Preferences", "Dynamic Lines Sprint"), "n_TargetLinesDynamicSprint");
 	layouter.AddSliderField(_Tr("Preferences", "Dynamic Lines Multiplier"), "n_TargetLinesDynamicMultiplier", 1, 100, 1,
 				ConfigNumberFormatter(1, "x"));
 	
@@ -824,12 +848,12 @@ namespace spades {
     layouter.AddSliderField(_Tr("Preferences", "Transparency"), "n_TargetTransparency", 0, 1., 0.1,
 				ConfigNumberFormatter(1, "x"));
 				
-	layouter.AddSliderField(_Tr("Preferences", "Red"), "n_TargetColorRed", 0, 1., 0.1,
-				ConfigNumberFormatter(1, "x"));
-	layouter.AddSliderField(_Tr("Preferences", "Green"), "n_TargetColorGreen", 0, 1., 0.1,
-				ConfigNumberFormatter(1, "x"));
-	layouter.AddSliderField(_Tr("Preferences", "Blue"), "n_TargetColorBlue", 0, 1., 0.1,
-				ConfigNumberFormatter(1, "x"));
+	layouter.AddSliderField(_Tr("Preferences", "Red"), "n_TargetColorRed", 0, 255, 1,
+				ConfigNumberFormatter(0, ""));
+	layouter.AddSliderField(_Tr("Preferences", "Green"), "n_TargetColorGreen", 0, 255, 1,
+				ConfigNumberFormatter(0, ""));
+	layouter.AddSliderField(_Tr("Preferences", "Blue"), "n_TargetColorBlue", 0, 255, 1,
+				ConfigNumberFormatter(0, ""));
     layouter.FinishLayout();
 	 }
 	}

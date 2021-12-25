@@ -228,10 +228,16 @@ namespace spades {
 					}
 				}
 
-				drawBox(hitboxes.head, getColor(hit.numHeadHits));
-				drawBox(hitboxes.torso, getColor(hit.numTorsoHits));
+				int cnt = hit.numHeadHits + hit.numTorsoHits;
 				for (std::size_t i = 0; i < 3; i++)
-					drawBox(hitboxes.limbs[i], getColor(hit.numLimbHits[i]));
+					cnt += hit.numLimbHits[i];
+
+				if (cnt > 0) {
+					drawBox(hitboxes.head, getColor(hit.numHeadHits));
+					drawBox(hitboxes.torso, getColor(hit.numTorsoHits));
+					for (std::size_t i = 0; i < 3; i++)
+						drawBox(hitboxes.limbs[i], getColor(hit.numLimbHits[i]));
+				}
 			}
 
 			renderer->EndScene();

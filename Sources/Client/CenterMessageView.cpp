@@ -23,6 +23,9 @@
 #include "IFont.h"
 #include "IRenderer.h"
 #include <Core/Debug.h>
+#include <Core/Settings.h>
+
+DEFINE_SPADES_SETTING(n_centerMessageSize, "1");
 
 namespace spades {
 	namespace client {
@@ -91,7 +94,7 @@ namespace spades {
 				Vector4 shadow = {0, 0, 0, fade * 0.5f};
 				Vector4 color = {1, 1, 1, fade};
 
-				font->DrawShadow(ent.msg, MakeVector2(x, y), 1.f, color, shadow);
+				font->DrawShadow(ent.msg, MakeVector2(x, y), (float)n_centerMessageSize, color, shadow);
 			}
 		}
 	}

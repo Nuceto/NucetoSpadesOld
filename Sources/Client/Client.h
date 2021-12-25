@@ -204,6 +204,7 @@ namespace spades {
 
 			float hitFeedbackIconState;
 			bool hitFeedbackFriendly;
+		    float targetfirestate;
 
 			// manual focus
 			float focalLength;
@@ -488,6 +489,7 @@ namespace spades {
 			// END OF ADDED
 			
 			void PlayerCoords();
+			bool hitTestSizeToggle;
 		};
 	}
 }

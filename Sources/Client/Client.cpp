@@ -117,10 +117,12 @@ namespace spades {
 		      flashlightState(0),
 		      hitFeedbackIconState(0.f),
 		      hitFeedbackFriendly(false),
+			  targetfirestate(0.f),
 		      focalLength(20.f),
 		      targetFocalLength(20.f),
 		      autoFocusEnabled(true),
-
+			  
+              hitTestSizeToggle(false),
 		      inGameLimbo(false),
 		      fontManager(fontManager),
 		      alertDisappearTime(-10000.f),
@@ -330,6 +332,15 @@ namespace spades {
 			renderer->RegisterModel("Models/Player/Dead.kv6");
 			renderer->RegisterImage("Gfx/Spotlight.png");
 			renderer->RegisterImage("Gfx/Glare.png");
+			renderer->RegisterImage("Gfx/Killfeed/a-Rifle.png");
+			renderer->RegisterImage("Gfx/Killfeed/b-SMG.png");
+			renderer->RegisterImage("Gfx/Killfeed/c-Shotgun.png");
+			renderer->RegisterImage("Gfx/Killfeed/d-Headshot.png");
+			renderer->RegisterImage("Gfx/Killfeed/e-Melee.png");
+			renderer->RegisterImage("Gfx/Killfeed/f-Grenade.png");
+			renderer->RegisterImage("Gfx/Killfeed/g-Falling.png");
+			renderer->RegisterImage("Gfx/Killfeed/h-Teamchange.png");
+			renderer->RegisterImage("Gfx/Killfeed/i-Classchange.png");
 			renderer->RegisterModel("Models/Weapons/Spade/Spade.kv6");
 			renderer->RegisterModel("Models/Weapons/Block/Block2.kv6");
 			renderer->RegisterModel("Models/Weapons/Grenade/Grenade.kv6");

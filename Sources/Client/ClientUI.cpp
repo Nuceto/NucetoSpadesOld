@@ -30,7 +30,7 @@
 #include <ScriptBindings/Config.h>
 #include <ScriptBindings/ScriptFunction.h>
 
-
+DEFINE_SPADES_SETTING(n_globalCommand, "0");
 DEFINE_SPADES_SETTING(BindCommand1, "/ratio");
 DEFINE_SPADES_SETTING(BindCommand2, "/accuracy");
 DEFINE_SPADES_SETTING(BindCommand3, "/an");
@@ -80,34 +80,34 @@ namespace spades {
 		void ClientUI::sendBind1() {
 			if (!client)
 				return;
-			client->net->SendChat((std::string)BindCommand1, false);
+			client->net->SendChat((std::string)BindCommand1, n_globalCommand ? true : false);
 		}
 		void ClientUI::sendBind2() {
 			if (!client)
 				return;
-			client->net->SendChat((std::string)BindCommand2, false);
+			client->net->SendChat((std::string)BindCommand2, n_globalCommand ? true : false);
 		}
 		void ClientUI::sendBind3() {
 			if (!client)
 				return;
-			client->net->SendChat((std::string)BindCommand3, false);
+			client->net->SendChat((std::string)BindCommand3, n_globalCommand ? true : false);
 		}
 		void ClientUI::sendBind4() {
 			if (!client)
 				return;
-			client->net->SendChat((std::string)BindCommand4, false);
+			client->net->SendChat((std::string)BindCommand4, n_globalCommand ? true : false);
 		}
 		
 		void ClientUI::sendBind5() {
 			if (!client)
 				return;
-			client->net->SendChat((std::string)BindCommand5, false);
+			client->net->SendChat((std::string)BindCommand5, n_globalCommand ? true : false);
 		}
 		
 		void ClientUI::sendBind6() {
 			if (!client)
 				return;
-			client->net->SendChat((std::string)BindCommand6, false);
+			client->net->SendChat((std::string)BindCommand6, n_globalCommand ? true : false);
 		}
 		//
 

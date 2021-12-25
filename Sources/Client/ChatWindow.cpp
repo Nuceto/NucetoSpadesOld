@@ -39,6 +39,20 @@ namespace spades {
 		ChatWindow::ChatWindow(Client *cli, IRenderer *rend, IFont *fnt, bool killfeed)
 		    : client(cli), renderer(rend), font(fnt), killfeed(killfeed) {
 			firstY = 0.f;
+			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/a-Rifle.png"));
+			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/b-SMG.png"));
+			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/c-Shotgun.png"));
+			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/d-Headshot.png"));
+			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/e-Melee.png"));
+			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/f-Grenade.png"));
+			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/g-Falling.png"));
+			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/h-Teamchange.png"));
+			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/i-Classchange.png"));
+			for (size_t n = 0; n < mKillImages.size(); ++n) {
+				if (mKillImages[n]->GetHeight() > GetLineHeight()) {
+					SPRaise("Kill image (%d) height too big ", n);
+				}
+			}
 		}
 		ChatWindow::~ChatWindow() {}
 
@@ -267,67 +281,81 @@ namespace spades {
 				++it;
 			}
 		}
+		
+		IImage *ChatWindow::imageForIndex(char index) {
+			int real = index - 'a';
+			if (real >= 0 && real < (int)mKillImages.size()) {
+				return mKillImages[real];
+			}
+			return NULL;
+		}
 
 		void ChatWindow::Draw() {
-			SPADES_MARK_FUNCTION();
-
+			float winW = GetWidth();
 			float winH = expanded ? GetBufferHeight() : GetNormalHeight();
-
-			float winX = 4.f;
-			float winY = killfeed ? 8.f : renderer->ScreenHeight() - winH - 60.f;
-			std::list<ChatEntry>::iterator it;
-
-			float lHeight = GetLineHeight();
-
+			float winX = 4.0F;
+			float winY = killfeed ? 8.0F : renderer->ScreenHeight() - winH - 64.0F;
+			float linH = GetLineHeight();
 			float y = firstY;
 
-			Vector4 shadowColor = {0, 0, 0, 0.8f};
-			Vector4 brightShadowColor = {1, 1, 1, 0.8f};
+			Vector4 shadowColor = { 0, 0, 0, 0.8F };
+			Vector4 brightShadowColor = { 1, 1, 1, 0.8F };
 
 			std::string ch = "aaaaaa"; // let's not make a new object for each character.
 			// note: UTF-8's longest character is 6 bytes
 
-			if (expanded) {
-				// Draw a box behind text when expanded
-				Handle<IImage> whiteImage = renderer->RegisterImage("Gfx/White.tga");
-				renderer->SetColorAlphaPremultiplied(MakeVector4(0, 0, 0, 0.2f));
-				renderer->DrawImage(whiteImage, AABB2(0, winY, GetWidth(), winH));
+			if (expanded) { // Draw a box behind text when expanded
+				renderer->SetColorAlphaPremultiplied(MakeVector4(0, 0, 0, 0.5F));
+				renderer->DrawImage(nullptr, AABB2(2.0F, winY + y, winW + 16.0F, winH + 16.0F - y));
 			}
 
+			std::list<ChatEntry>::iterator it;
 			for (it = entries.begin(); it != entries.end(); ++it) {
-				ChatEntry &ent = *it;
+				ChatEntry& ent = *it;
 
-				const std::string &msg = ent.msg;
+				const std::string& msg = ent.msg;
 				Vector4 color = GetColor(MsgColorRestore);
 
-				float tx = 0.f, ty = y;
-
+				float tx = 0.0F, ty = y;
 				float fade = ent.fade;
 
 				if (expanded) {
 					// Display out-dated messages when expanded
 					fade = ent.bufferFade;
 				} else {
-					if (ent.timeFade < 1.f) {
+					if (ent.timeFade < 1.0F)
 						fade *= ent.timeFade;
-					}
 				}
 
-				if (fade < 0.01f) {
-					// Skip rendering invisible messages
-					goto endDrawLine;
-				}
+				if (fade < 0.01F)
+					goto endDrawLine; // Skip rendering invisible messages
 
-				brightShadowColor.w = shadowColor.w = .8f * fade;
-
+				brightShadowColor.w = shadowColor.w = 0.8F * fade;
 				color.w = fade;
+
 				for (size_t i = 0; i < msg.size(); i++) {
 					if (msg[i] == 13 || msg[i] == 10) {
-						tx = 0.f;
-						ty += lHeight;
+						tx = 0.0F;
+						ty += linH;
 					} else if (msg[i] <= MsgColorMax && msg[i] >= 1) {
-						color = GetColor(msg[i]);
-						color.w = fade;
+						if (msg[i] == MsgImage) {
+							IImage* kill = NULL;
+							if (i + 1 < msg.size() && (kill = imageForIndex(msg[i + 1]))) {
+								Vector4 colorpm = color;
+								colorpm.x *= colorpm.w;
+								colorpm.y *= colorpm.w;
+								colorpm.z *= colorpm.w;
+								renderer->SetColorAlphaPremultiplied(colorpm);
+								renderer->DrawImage(kill, MakeVector2(tx + winX, ty + winY));
+								tx += kill->GetWidth();
+								++i;
+							} else {
+								// just ignore invalid icon specifier
+							}
+						} else {
+							color = GetColor(msg[i]);
+							color.w = fade;
+						}
 					} else {
 						size_t ln = 0;
 						GetCodePointFromUTF8String(msg, i, &ln);
@@ -338,8 +366,8 @@ namespace spades {
 
 						float luminosity = color.x + color.y + color.z;
 
-						font->DrawShadow(ch, MakeVector2(tx + winX, ty + winY), 1.f, color,
-						                 luminosity > 0.9f ? shadowColor : brightShadowColor);
+						font->DrawShadow(ch, MakeVector2(tx + winX, ty + winY), 1.0F,
+							color, (luminosity > 0.9F) ? shadowColor : brightShadowColor);
 						tx += font->Measure(ch).x;
 					}
 				}
