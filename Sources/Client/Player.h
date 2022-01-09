@@ -127,6 +127,8 @@ namespace spades {
 			void RepositionPlayer(const Vector3 &);
 			void MovePlayer(float fsynctics);
 			void BoxClipMove(float fsynctics);
+			
+			bool TryUncrouch();
 
 			void UseSpade();
 			void DigWithSpade();
@@ -213,7 +215,6 @@ namespace spades {
 			bool IsOnGroundOrWade();
 
 			void Update(float dt);
-			bool TryUncrouch(bool move); // ??
 
 			float GetToolPrimaryDelay();
 			float GetToolSecondaryDelay();

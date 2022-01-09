@@ -104,11 +104,21 @@ namespace spades {
 			if (!IsAlive())
 				return;
 
-			if (newInput.crouch != input.crouch && !airborne) {
-				if (newInput.crouch)
-					position.z += 0.9f;
-				else
-					position.z -= 0.9f;
+			if (newInput.crouch != input.crouch) {
+				if (newInput.crouch) {
+					if (!airborne) {
+						position.z += 0.9f;
+					}
+				} else {
+					// Refuse the standing-up request if there's no room
+					if (!TryUncrouch()) {
+						// ... But if the request is from the server,
+						// don't ask questions
+						if (IsLocalPlayer()) {
+							newInput.crouch = true;
+						}
+					}
+				}
 			}
 			input = newInput;
 		}
@@ -1333,7 +1343,7 @@ namespace spades {
 			}
 		}
 
-		bool Player::TryUncrouch(bool move) {
+		bool Player::TryUncrouch() {
 			SPADES_MARK_FUNCTION();
 
 			float x1 = position.x + 0.45f;
@@ -1348,14 +1358,12 @@ namespace spades {
 			// lower feet
 			if (airborne &&
 			    !(map->ClipBox(x1, y1, z1) || map->ClipBox(x2, y1, z1) ||
-			      map->ClipBox(x1, y2, z1) || map->ClipBox(x2, y2, z1)))
+			      map->ClipBox(x1, y2, z1) || map->ClipBox(x2, y2, z1))) {
 				return true;
-			else if (!(map->ClipBox(x1, y1, z2) || map->ClipBox(x2, y1, z2) ||
+			} else if (!(map->ClipBox(x1, y1, z2) || map->ClipBox(x2, y1, z2) ||
 			           map->ClipBox(x1, y2, z2) || map->ClipBox(x2, y2, z2))) {
-				if (move) {
-					position.z -= 0.9f;
-					eye.z -= 0.9f;
-				}
+				position.z -= 0.9f;
+				eye.z -= 0.9f;
 				return true;
 			}
 			return false;
