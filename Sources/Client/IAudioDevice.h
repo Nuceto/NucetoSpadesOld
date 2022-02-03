@@ -36,7 +36,7 @@ namespace spades {
 			AudioParam() {
 				volume = 1.f;
 				pitch = 1.f;
-				referenceDistance = 1.5f;
+				referenceDistance = 1.0f;
 			}
 		};
 
