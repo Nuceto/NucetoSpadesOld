@@ -48,6 +48,7 @@ namespace spades {
 			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/g-Falling.png"));
 			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/h-Teamchange.png"));
 			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/i-Classchange.png"));
+			mKillImages.push_back(renderer->RegisterImage("Gfx/Killfeed/j-NoScope.png"));
 			for (size_t n = 0; n < mKillImages.size(); ++n) {
 				if (mKillImages[n]->GetHeight() > GetLineHeight()) {
 					SPRaise("Kill image (%d) height too big ", n);
@@ -96,7 +97,8 @@ namespace spades {
 				case KillTypeGrenade:
 				case KillTypeFall:
 				case KillTypeTeamChange:
-				case KillTypeClassChange: tmp[1] = 'a' + 2 + type; break;
+				case KillTypeClassChange: 
+				case 7:tmp[1] = 'a' + 2 + type; break;
 				default: return "";
 			}
 			return tmp;

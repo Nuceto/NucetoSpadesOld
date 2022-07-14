@@ -883,52 +883,49 @@ namespace spades {
 				isFriendlyFire = false;
 			
 			if(cg_killFeedImg){
-
-			Weapon *w = killer->GetWeapon(); // only used in case of KillTypeWeapon
-			
-			if(killer->GetWeapon() && kt == KillTypeHeadshot){
-			cause += ChatWindow::killImage(0, w ? w->GetWeaponType() : RIFLE_WEAPON);
-			cause += " ";
-			}
-			cause += ChatWindow::killImage(kt, w ? w->GetWeaponType() : RIFLE_WEAPON);
+				Weapon *w = killer->GetWeapon(); // only used in case of KillTypeWeapon
+				
+				if(killer->IsToolWeapon() && kt == KillTypeHeadshot){
+					cause += ChatWindow::killImage(0, w ? w->GetWeaponType() : RIFLE_WEAPON);
+					cause += " ";
+				}
+				cause += ChatWindow::killImage(kt, w ? w->GetWeaponType() : RIFLE_WEAPON);
+				
+				WeaponInput inp = killer->GetWeaponInput();
+				if(!inp.secondary && killer->IsToolWeapon() && killer->IsAlive()){
+					cause += " ";
+					cause += ChatWindow::killImage(7, 3);
+				}
 			}else{
-			Weapon *w =
-			  killer ? killer->GetWeapon() : nullptr; // only used in case of KillTypeWeapon
-			switch (kt) {
-				case KillTypeWeapon:
-					switch (w ? w->GetWeaponType() : RIFLE_WEAPON) {
-						case RIFLE_WEAPON: cause += _Tr("Client", "Rifle"); break;
-						case SMG_WEAPON: cause += _Tr("Client", "SMG"); break;
-						case SHOTGUN_WEAPON: cause += _Tr("Client", "Shotgun"); break;
-					}
-					break;
-				case KillTypeFall:
-					//! A cause of death shown in the kill feed.
-					cause += _Tr("Client", "Fall");
-					break;
-				case KillTypeMelee:
-					//! A cause of death shown in the kill feed.
-					cause += _Tr("Client", "Melee");
-					break;
-				case KillTypeGrenade:
-					cause += _Tr("Client", "Grenade");
-					break;
-				case KillTypeHeadshot:
-					//! A cause of death shown in the kill feed.
-					cause += _Tr("Client", "Headshot");
-					break;
-				case KillTypeTeamChange:
-					//! A cause of death shown in the kill feed.
-					cause += _Tr("Client", "Team Change");
-					break;
-				case KillTypeClassChange:
-					//! A cause of death shown in the kill feed.
-					cause += _Tr("Client", "Weapon Change");
-					break;
-				default:
-					cause += "???";
-					break;				
-			}
+				Weapon *w =
+				killer ? killer->GetWeapon() : nullptr; // only used in case of KillTypeWeapon
+				switch (kt) {
+					case KillTypeWeapon:
+						switch (w ? w->GetWeaponType() : RIFLE_WEAPON) {
+							case RIFLE_WEAPON: cause += _Tr("Client", "Rifle"); break;
+							case SMG_WEAPON: cause += _Tr("Client", "SMG"); break;
+							case SHOTGUN_WEAPON: cause += _Tr("Client", "Shotgun"); break;
+						} break;
+					case KillTypeFall:
+						//! A cause of death shown in the kill feed.
+						cause += _Tr("Client", "Fall"); break;
+					case KillTypeMelee:
+						//! A cause of death shown in the kill feed.
+						cause += _Tr("Client", "Melee"); break;
+					case KillTypeGrenade:
+						cause += _Tr("Client", "Grenade"); break;
+					case KillTypeHeadshot:
+						//! A cause of death shown in the kill feed.
+						cause += _Tr("Client", "Headshot"); break;
+					case KillTypeTeamChange:
+						//! A cause of death shown in the kill feed.
+						cause += _Tr("Client", "Team Change"); break;
+					case KillTypeClassChange:
+						//! A cause of death shown in the kill feed.
+						cause += _Tr("Client", "Weapon Change"); break;
+					default:
+						cause += "???"; break;				
+				}	
 			}
 
 			s += " [";
@@ -939,11 +936,23 @@ namespace spades {
 			else
 				s += cause;
 			s += "] ";
+			
+			WeaponInput inp = killer->GetWeaponInput();
+			if(!inp.secondary && !cg_killFeedImg && killer->IsToolWeapon() && killer->IsAlive()){
+				s += "[NoScope] ";
+			}
+
+			char buff[64];
+			int dist = (int)floorf((victim->GetEye() - killer->GetEye()).GetLength() + 0.5F);
+			sprintf(buff, "[%d m] ", dist);
+			if(killer->IsToolWeapon() && killer->IsAlive()){
+				s += ChatWindow::ColoredMessage(buff, MsgColorTeam3);
+			}
 
 			if (killer != victim) {
 				s += ChatWindow::TeamColorMessage(victim->GetName(), victim->GetTeamId());
 			}
-
+			
 			killfeedWindow->AddMessage(s);
 
 			// log to netlog
